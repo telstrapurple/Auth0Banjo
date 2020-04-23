@@ -1,0 +1,30 @@
+{
+  "is_token_endpoint_ip_header_trusted": false,
+  "name": "Tones localhost rest api (Test Application)",
+  "is_first_party": true,
+  "oidc_conformant": true,
+  "sso_disabled": false,
+  "cross_origin_auth": false,
+  "allowed_clients": [],
+  "callbacks": [],
+  "native_social_login": {
+    "apple": {
+      "enabled": false
+    },
+    "facebook": {
+      "enabled": false
+    }
+  },
+  "jwt_configuration": {
+    "alg": "RS256",
+    "lifetime_in_seconds": 36000,
+    "secret_encoded": false
+  },
+  "client_aliases": [],
+  "token_endpoint_auth_method": "client_secret_post",
+  "app_type": "non_interactive",
+  "grant_types": [
+    "client_credentials"
+  ],
+  "custom_login_page_on": true
+}

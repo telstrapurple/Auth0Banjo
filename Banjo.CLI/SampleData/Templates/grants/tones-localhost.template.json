@@ -1,0 +1,5 @@
+{
+  "client_id": "Tones localhost rest api (Test Application)",
+  "audience": "local.rest.tones.com",
+  "scope": []
+}
