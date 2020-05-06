@@ -6,3 +6,4 @@ riderModule.iml
 .idea/
 /*.sln.DotSettings.user
 /Banjo.CLI/Banjo.CLI.*.nupkg
+.vs/
