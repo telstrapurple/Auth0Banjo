@@ -7,6 +7,6 @@ namespace Banjo.CLI.Services
     {
         public ResourceType[] ResourceTypes { get; }
 
-        public Task ProcessAsync(TemplateMetadata template);
+        public Task ProcessAsync(Auth0ResourceTemplate template);
     }
 }

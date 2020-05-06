@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Banjo.CLI.Model
 {
@@ -23,10 +24,16 @@ namespace Banjo.CLI.Model
         [JsonProperty("name")]
         public string TemplateName { get; set; }
 
+        [JsonProperty("overrides")]
+        public IEnumerable<OverrideDefinition> Overrides { get; set; }
+    }
+
+    public class OverrideDefinition
+    {
         [JsonProperty("jsonpath")]
         public string Path { get; set; }
 
         [JsonProperty("replacement")]
-        public dynamic Replacement { get; set; }
+        public JToken Replacement { get; set; }
     }
 }

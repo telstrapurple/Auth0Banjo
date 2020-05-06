@@ -12,25 +12,24 @@ namespace Banjo.CLI.Services
         public ResourceType[] ResourceTypes { get; } = { ResourceType.Clients };
 
         private readonly ILogger<ClientsProcessor> _logger;
-        private readonly ITemplateReader<Client> _clientReader;
         private readonly ManagementApiClientFactory _managementApiClientFactory;
+        private readonly IConverter<Auth0ResourceTemplate, Client> _converter;
 
         public ClientsProcessor(
             ILogger<ClientsProcessor> logger,
-            ITemplateReader<Client> clientReader,
-            ManagementApiClientFactory managementApiClientFactory
-        )
+            ManagementApiClientFactory managementApiClientFactory,
+            IConverter<Auth0ResourceTemplate, Client> converter)
         {
-            _clientReader = clientReader;
             _managementApiClientFactory = managementApiClientFactory;
+            _converter = converter;
             _logger = logger;
         }
 
-        public async Task ProcessAsync(TemplateMetadata template)
+        public async Task ProcessAsync(Auth0ResourceTemplate template)
         {
             using var managementClient = await _managementApiClientFactory.CreateAsync();
 
-            var clientTemplates = await _clientReader.ReadTemplateContents(template);
+            var clientTemplates = _converter.Convert(template);
 
             // //todo support proper pagination - how to do this where every api call is different?!
             var results = await managementClient.Clients.GetAllAsync(new GetClientsRequest() { IsGlobal = false }, new PaginationInfo());

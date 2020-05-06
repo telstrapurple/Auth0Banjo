@@ -1,6 +1,8 @@
 using System.Net.Http;
 using Auth0.ManagementApi;
+using Auth0.ManagementApi.Models;
 using Autofac;
+using Banjo.CLI.Model;
 using Banjo.CLI.Services;
 using Microsoft.Extensions.Logging;
 
@@ -28,14 +30,18 @@ namespace Banjo.CLI
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            container.RegisterGeneric(typeof(DeserialisingTemplateReader<>))
-                .As(typeof(ITemplateReader<>));
+            container.RegisterGeneric(typeof(TemplateReaderOld<>))
+                .As(typeof(ITemplateReaderOld<>));
 
             container.RegisterType<ClientsProcessor>()
                 .AsSelf()
                 .AsImplementedInterfaces();
             
             container.RegisterType<HttpClientManagementConnection>().AsImplementedInterfaces().SingleInstance();
+            
+            container.RegisterGeneric(typeof(Auth0ResourceTemplateToApiModelConverter<>))
+                .AsSelf()
+                .AsImplementedInterfaces();
         }
     }
 }

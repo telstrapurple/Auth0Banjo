@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Banjo.CLI.Model;
 using Banjo.CLI.Services;
+using Banjo.CLI.Services.Enrichers;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Banjo.CLI.Commands
 {
@@ -76,17 +81,27 @@ namespace Banjo.CLI.Commands
             foreach (var templateType in supportedTemplateTypes)
             {
                 var templates = _templateSource.GetTemplates(TemplatesPath, templateType);
-                foreach (var templateMetadata in templates)
+
+                var pipeline = new List<IProcessor<Auth0ResourceTemplate>>
                 {
-                    Console.WriteLine($"{templateMetadata.Type.Name} {templateMetadata.Location.FullName}");
-                    
-                    //skip the overrides for now, let's just get the basics working
-                    // - read the template AS A WHOLE PAYLOAD
-                    // - make the api calls
-                    //done
-                    
-                    await _clientsProcessor.ProcessAsync(templateMetadata);
-                }
+                    new TemplateReaderProcessor(), 
+                    new ApplyOverridesProcessor(overrides), 
+                    new WriteOutputProcessor(app.GetService<ILogger<WriteOutputProcessor>>())
+                };
+                
+                await new PipelineExecutor().ExecuteAsync(pipeline, templates);
+
+                // foreach (var templateMetadata in templates)
+                // {
+                //     Console.WriteLine($"{templateMetadata.Type.Name} {templateMetadata.Location.FullName}");
+                //     
+                //     //skip the overrides for now, let's just get the basics working
+                //     // - read the template AS A WHOLE PAYLOAD
+                //     // - make the api calls
+                //     //done
+                //     
+                //     await _clientsProcessor.ProcessAsync(templateMetadata);
+                // }
             }
         }
     }

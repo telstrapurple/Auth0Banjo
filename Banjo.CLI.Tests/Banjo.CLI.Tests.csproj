@@ -22,6 +22,10 @@
 
     <ItemGroup>
         <None Include="SampleData/**/*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+        <None Update="SampleData\Overrides\tones.overrides.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+          <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

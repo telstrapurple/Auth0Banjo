@@ -5,6 +5,6 @@ namespace Banjo.CLI.Services
 {
     public interface ITemplateSource
     {
-        IEnumerable<TemplateMetadata> GetTemplates(string templatesPath, ResourceType templateType);
+        IEnumerable<Auth0ResourceTemplate> GetTemplates(string templatesPath, ResourceType templateType);
     }
 }
