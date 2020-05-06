@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using Banjo.CLI.Model;
@@ -33,22 +32,31 @@ namespace Banjo.CLI.Services
 
             var clientTemplates = await _clientReader.ReadTemplateContents(template);
 
-            //todo support proper pagination - how to do this where every api call is different?!
+            // //todo support proper pagination - how to do this where every api call is different?!
             var results = await managementClient.Clients.GetAllAsync(new GetClientsRequest() { IsGlobal = false }, new PaginationInfo());
 
-            // var existingClient = results.Where(x => string.Equals(x.Name, client.Name, StringComparison.OrdinalIgnoreCase));
-            foreach (var result in results)
+            var matchingClient = results.FirstOrDefault(x => string.Equals(x.Name, clientTemplates.Name));
+            if (matchingClient == null)
             {
-                _logger.LogInformation($"Found an existing client: {result.Name}");
-            }
-
-            if (results.Any(x => string.Equals(x.Name, clientTemplates.Name)))
-            {
-                _logger.LogInformation($"Found the client we're after: {clientTemplates.Name}");
+                //create
+                _logger.LogInformation($"Creating a new client: {clientTemplates.Name}");
+                var createClientRequest = Reflectorisor.CopyMembers<Client, ClientCreateRequest>(clientTemplates);
+                var createResult = await managementClient.Clients.CreateAsync(createClientRequest);
             }
             else
             {
-                _logger.LogInformation($"Did not find the client we're after: {clientTemplates.Name}");
+                _logger.LogInformation($"Updating existing client: {matchingClient.ClientId} {clientTemplates.Name}");
+                //update
+                var updateClientRequest = Reflectorisor.CopyMembers<Client, ClientUpdateRequest>(clientTemplates);
+                
+                //fix illegal options
+                if (clientTemplates.JwtConfiguration != null)
+                {
+                    //can't specify IsSecretEncoded (~ secret_encoded) on an update operation
+                    clientTemplates.JwtConfiguration.IsSecretEncoded = null;
+                }
+                
+                var updateResult = await managementClient.Clients.UpdateAsync(matchingClient.ClientId, updateClientRequest);
             }
         }
     }
