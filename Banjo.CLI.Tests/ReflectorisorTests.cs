@@ -15,7 +15,7 @@ namespace Banjo.CLI.Tests
         public async Task TestClient()
         {
             var from = JsonConvert.DeserializeObject<Client>(await File.ReadAllTextAsync("./SampleData/Templates/clients/tones-localhost.template.json"));
-            
+
             var to = Reflectorisor.CopyMembers<Client, ClientCreateRequest>(from);
 
             to.AddOns?.ShouldBe(from.AddOns);

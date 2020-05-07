@@ -9,7 +9,7 @@ namespace Banjo.CLI.Services
     {
         Overrides GetOverrides(string overridesFileLocation);
     }
-    
+
     public class OverridesSource : IOverridesSource
     {
         private readonly ILogger<OverridesSource> _logger;
@@ -25,7 +25,7 @@ namespace Banjo.CLI.Services
             {
                 return new Overrides(); //empty overrides
             }
-            
+
             using var reader = File.OpenText(overridesFileLocation);
             using var jsonReader = new JsonTextReader(reader);
             return new JsonSerializer().Deserialize<Overrides>(jsonReader);

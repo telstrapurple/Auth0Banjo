@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Banjo.CLI.Model;
-using IdentityModel.Client;
 
-namespace Banjo.CLI.Services.Enrichers
+namespace Banjo.CLI.Services.Processors
 {
     public class ApplyOverridesProcessor : IProcessor<Auth0ResourceTemplate>
     {
@@ -22,7 +21,7 @@ namespace Banjo.CLI.Services.Enrichers
             {
                 throw new ArgumentNullException("t.Template", "Template property must be set on input argument t");
             }
-            
+
             if (_overrides == null)
             {
                 //if no overrides, no-op and return
@@ -36,9 +35,9 @@ namespace Banjo.CLI.Services.Enrichers
                 var token = t.Template.SelectToken(@override.Path, true);
                 token.Replace(@override.Replacement);
             }
-            
+
             t.OverridesApplied = true;
-            
+
             return t;
         }
     }

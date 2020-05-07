@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Banjo.CLI.Commands;
-using Banjo.CLI.Services;
+using Banjo.CLI.Configuration;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,10 +18,10 @@ namespace Banjo.CLI
         // typeof(HelloWorldCommand),
         typeof(ProcessCommand), typeof(HelloWorldCommand)
     )]
-    public class Program2 : BanjoCommandBase
+    public class Program : BanjoCommandBase
     {
         private static string GetVersion()
-            => typeof(Program2).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            => typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
 
         public static async Task<int> Main(string[] args)
@@ -29,15 +29,14 @@ namespace Banjo.CLI
             return await Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureLogging((context, builder) => { builder.SetMinimumLevel(LogLevel.Information).AddConsole(); })
+                .ConfigureAppConfiguration((hostingContext, config) => { config.AddInMemoryCollection(); })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<Auth0AuthenticationConfig>(hostContext.Configuration.GetSection("Auth0"));
+                    services.Configure<Auth0ProcessArgsConfig>(hostContext.Configuration);
                 })
-                .ConfigureContainer<ContainerBuilder>(container =>
-                {
-                    container.RegisterApplicationServices();
-                })
-                .RunCommandLineApplicationAsync<Program2>(args);
+                .ConfigureContainer<ContainerBuilder>(container => { container.RegisterApplicationServices(); })
+                .RunCommandLineApplicationAsync<Program>(args);
         }
 
         public override Task OnExecuteAsync(CommandLineApplication app)

@@ -10,7 +10,7 @@ namespace Banjo.CLI
 
         int Run(string[] args);
     }
-    
+
     public class Application : IApplication
     {
         public CommandExecutor Executor { get; set; }

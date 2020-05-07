@@ -3,17 +3,17 @@
     {
       "name": "tones-localhost.template.json",
       "overrides": [
-        {
-          "jsonpath": "jwt_configuration.alg",
-          "replacement": {
-            "name1": "value1",
-            "list1": [{"innerprop1": "innervalue 1", "innerprop2": "inner value 2"}, {"innerprop3": "innervalue3", "innerprop4": "inner value 4"}]
-          }
-        },
-        {
-          "jsonpath": "jwt_configuration.lifetime_in_seconds",
-          "replacement": "somethingsomething"
-        }
+//        {
+//          "jsonpath": "jwt_configuration.alg",
+//          "replacement": {
+//            "name1": "value1",
+//            "list1": [{"innerprop1": "innervalue 1", "innerprop2": "inner value 2"}, {"innerprop3": "innervalue3", "innerprop4": "inner value 4"}]
+//          }
+//        },
+//        {
+//          "jsonpath": "jwt_configuration.lifetime_in_seconds",
+//          "replacement": "somethingsomething"
+//        }
       ]
     }
   ]

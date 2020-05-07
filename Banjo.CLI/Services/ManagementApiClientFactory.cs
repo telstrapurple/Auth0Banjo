@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Auth0.ManagementApi;
+using Banjo.CLI.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Banjo.CLI.Services

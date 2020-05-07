@@ -11,5 +11,6 @@ namespace Banjo.CLI.Model
         public JToken Template { get; set; }
         public bool OverridesApplied { get; set; } = false;
         public bool ReplacementsApplied { get; set; } = false;
+        public bool ApiCallsProcessed { get; set; } = false;
     }
 }

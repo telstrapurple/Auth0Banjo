@@ -3,7 +3,7 @@ using Banjo.CLI.Model;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Banjo.CLI.Services.Enrichers
+namespace Banjo.CLI.Services.Processors
 {
     public class WriteOutputProcessor : IProcessor<Auth0ResourceTemplate>
     {

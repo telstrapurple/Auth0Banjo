@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
 using Banjo.CLI.Services;
-using Banjo.CLI.Services.Enrichers;
+using Banjo.CLI.Services.Processors;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Banjo.CLI.Commands
 {
@@ -46,15 +44,20 @@ namespace Banjo.CLI.Commands
             Description = "Process the templates, but don't execute the API calls")]
         public bool DryRun { get; set; } = false;
 
-        private readonly IOverridesSource _overridesSource;
         private readonly ITemplateSource _templateSource;
         private readonly ClientsProcessor _clientsProcessor;
+        private readonly ProcessorFactory _processorFactory;
+        private readonly ArgumentConfigurator _configurator;
 
-        public ProcessCommand(IOverridesSource overridesSource, ITemplateSource templateSource, ClientsProcessor clientsProcessor)
+        public ProcessCommand(
+            ITemplateSource templateSource,
+            ClientsProcessor clientsProcessor,
+            ProcessorFactory processorFactory, ArgumentConfigurator configurator)
         {
-            _overridesSource = overridesSource;
             _templateSource = templateSource;
             _clientsProcessor = clientsProcessor;
+            _processorFactory = processorFactory;
+            _configurator = configurator;
         }
 
         public override async Task OnExecuteAsync(CommandLineApplication app)
@@ -63,7 +66,15 @@ namespace Banjo.CLI.Commands
             Console.WriteLine($"{nameof(OverridePath)} = {OverridePath}");
             Console.WriteLine($"{nameof(ProcessedOutputPath)} = {ProcessedOutputPath}");
             Console.WriteLine($"{nameof(DryRun)} = {DryRun}");
-            
+
+            _configurator.AddConfiguration(new Auth0ProcessArgsConfig
+            {
+                DryRun = DryRun,
+                OutputPath = ProcessedOutputPath,
+                OverrideFilePath = OverridePath,
+                TemplateInputPath = TemplatesPath
+            });
+
             //read the overrides file
             //read the token replacements map (file or args)
             //foreach template type
@@ -75,33 +86,20 @@ namespace Banjo.CLI.Commands
             //  validate resulting template by parsing into Auth0 model classes
             //  if !dryrun, do api calls
 
-            var overrides = _overridesSource.GetOverrides(OverridePath);
-            
-            var supportedTemplateTypes = new[] {ResourceType.Clients};
-            foreach (var templateType in supportedTemplateTypes)
+
+            foreach (var templateType in ResourceType.SupportedResourceTypes)
             {
                 var templates = _templateSource.GetTemplates(TemplatesPath, templateType);
 
                 var pipeline = new List<IProcessor<Auth0ResourceTemplate>>
                 {
-                    new TemplateReaderProcessor(), 
-                    new ApplyOverridesProcessor(overrides), 
-                    new WriteOutputProcessor(app.GetService<ILogger<WriteOutputProcessor>>())
+                    _processorFactory.CreateTemplateReader(),
+                    _processorFactory.CreateOverridesProcessor(),
+                    _processorFactory.CreateOutputProcessor(),
+                    _processorFactory.CreateApiExecutor()
                 };
-                
-                await new PipelineExecutor().ExecuteAsync(pipeline, templates);
 
-                // foreach (var templateMetadata in templates)
-                // {
-                //     Console.WriteLine($"{templateMetadata.Type.Name} {templateMetadata.Location.FullName}");
-                //     
-                //     //skip the overrides for now, let's just get the basics working
-                //     // - read the template AS A WHOLE PAYLOAD
-                //     // - make the api calls
-                //     //done
-                //     
-                //     await _clientsProcessor.ProcessAsync(templateMetadata);
-                // }
+                await new PipelineExecutor().ExecuteAsync(pipeline, templates);
             }
         }
     }
