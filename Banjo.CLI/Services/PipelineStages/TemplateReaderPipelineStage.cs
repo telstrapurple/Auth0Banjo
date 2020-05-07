@@ -4,9 +4,9 @@ using Banjo.CLI.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Banjo.CLI.Services.Processors
+namespace Banjo.CLI.Services.PipelineStages
 {
-    public class TemplateReaderProcessor : IProcessor<Auth0ResourceTemplate>
+    public class TemplateReaderPipelineStage : IPipelineStage<Auth0ResourceTemplate>
     {
         public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
         {

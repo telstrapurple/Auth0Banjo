@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Banjo.CLI.Services;
 using McMaster.Extensions.CommandLineUtils;
-using Oakton;
 
 namespace Banjo.CLI.Commands
 {
@@ -25,7 +24,7 @@ namespace Banjo.CLI.Commands
 
         public override async Task OnExecuteAsync(CommandLineApplication app)
         {
-            ConsoleWriter.Write(Colour, _greeter.GetHello(Name));
+            Console.WriteLine(_greeter.GetHello(Name));
         }
     }
 }

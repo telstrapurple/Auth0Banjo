@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
 using Banjo.CLI.Services;
-using Banjo.CLI.Services.Processors;
+using Banjo.CLI.Services.PipelineStages;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Logging;
 
 namespace Banjo.CLI.Commands
 {
@@ -34,30 +36,38 @@ namespace Banjo.CLI.Commands
             CommandOptionType.SingleValue,
             LongName = "output",
             ShortName = "out",
-            Description = "The output path for processed template files")]
-        public string ProcessedOutputPath { get; set; } = "./output";
+            Description = "The output path for writing the effective templates")]
+        public string ProcessedOutputPath { get; set; }
 
         [Option(
             CommandOptionType.NoValue,
             LongName = "dry-run",
             ShortName = "d",
-            Description = "Process the templates, but don't execute the API calls")]
+            Description = "Process the templates, plan the mutation operations to make (which may include some Auth0 API calls), but do not create/update any Auth0 resources.")]
         public bool DryRun { get; set; } = false;
 
+        [Option(
+            CommandOptionType.NoValue,
+            LongName = "verify",
+            ShortName = "y",
+            Description = "Verify the resulting effective templates, but do not make any Auth0 API calls. Should be used in conjunction with -out|--output {output-path}")]
+        public bool Verify { get; set; } = false;
+
         private readonly ITemplateSource _templateSource;
-        private readonly ClientsProcessor _clientsProcessor;
-        private readonly ProcessorFactory _processorFactory;
+        private readonly PipelineStageFactory _pipelineStageFactory;
         private readonly ArgumentConfigurator _configurator;
+        private readonly ILogger<ProcessCommand> _logger;
 
         public ProcessCommand(
             ITemplateSource templateSource,
-            ClientsProcessor clientsProcessor,
-            ProcessorFactory processorFactory, ArgumentConfigurator configurator)
+            PipelineStageFactory pipelineStageFactory,
+            ArgumentConfigurator configurator,
+            ILogger<ProcessCommand> logger)
         {
             _templateSource = templateSource;
-            _clientsProcessor = clientsProcessor;
-            _processorFactory = processorFactory;
+            _pipelineStageFactory = pipelineStageFactory;
             _configurator = configurator;
+            _logger = logger;
         }
 
         public override async Task OnExecuteAsync(CommandLineApplication app)
@@ -75,32 +85,38 @@ namespace Banjo.CLI.Commands
                 TemplateInputPath = TemplatesPath
             });
 
-            //read the overrides file
-            //read the token replacements map (file or args)
-            //foreach template type
-            //  read the templates
-            //  foreach template
-            //    apply the overrides
-            //    apply the token replacements
-            //  if dryrun, write out the files
-            //  validate resulting template by parsing into Auth0 model classes
-            //  if !dryrun, do api calls
-
-
-            foreach (var templateType in ResourceType.SupportedResourceTypes)
+            if (Verify && string.IsNullOrEmpty(ProcessedOutputPath))
             {
-                var templates = _templateSource.GetTemplates(TemplatesPath, templateType);
-
-                var pipeline = new List<IProcessor<Auth0ResourceTemplate>>
-                {
-                    _processorFactory.CreateTemplateReader(),
-                    _processorFactory.CreateOverridesProcessor(),
-                    _processorFactory.CreateOutputProcessor(),
-                    _processorFactory.CreateApiExecutor()
-                };
-
-                await new PipelineExecutor().ExecuteAsync(pipeline, templates);
+                _logger.LogWarning(
+                    "Banjo will verify the result of processing the templates, but will not write the " +
+                    "result of the processed template, which will make it hard to debug any issues if the " +
+                    "templates are found to be not valid.");
+                _logger.LogWarning("Recommend also setting -out|--output {output-path} to have Banjo " +
+                                   "write the effective templates.");
             }
+
+            var pipelineStages = new List<IPipelineStage<Auth0ResourceTemplate>>
+            {
+                _pipelineStageFactory.CreateTemplateReader(),
+                _pipelineStageFactory.CreateOverridesProcessor(),
+                _pipelineStageFactory.CreateOutputProcessor(),
+                _pipelineStageFactory.CreateVerifier()
+            };
+
+            if (Verify == false)
+            {
+                //if Verify == true, then user has explicitly passed '-y', which means no API calls.
+                //But in this block, it's false, so we need to do the api calls.
+                pipelineStages.Add(_pipelineStageFactory.CreateApiExecutor());
+            }
+
+            var pipeline = new PipelineExecutor(pipelineStages);
+
+            var templatesToProcess = ResourceType.SupportedResourceTypes
+                .SelectMany(x => _templateSource.GetTemplates(TemplatesPath, x))
+                .ToList();
+
+            await pipeline.ExecuteAsync(templatesToProcess);
         }
     }
 }

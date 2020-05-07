@@ -1,11 +1,11 @@
 using System.Net.Http;
 using Auth0.ManagementApi;
-using Auth0.ManagementApi.Models;
 using Autofac;
 using Banjo.CLI.Configuration;
-using Banjo.CLI.Model;
 using Banjo.CLI.Services;
-using Banjo.CLI.Services.Processors;
+using Banjo.CLI.Services.PipelineStages;
+using Banjo.CLI.Services.ResourceTypeProcessors;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable RedundantTypeArgumentsOfMethod - Type arguments make it easier to see exactly what is being registered
@@ -16,7 +16,14 @@ namespace Banjo.CLI
     {
         public static void RegisterApplicationServices(this ContainerBuilder container)
         {
-            container.RegisterType<Application>().As<IApplication>().SingleInstance();
+            container.Register<ConsoleReporter>(
+                    //todo add a verbose option and pull from the Auth0ProcessArgsConfig
+                    context => new ConsoleReporter(context.Resolve<IConsole>(), false, false))
+                .AsImplementedInterfaces();
+            container.Register<PhysicalConsole>(context => PhysicalConsole.Singleton as PhysicalConsole)
+                .SingleInstance()
+                .AsImplementedInterfaces();
+
             container.RegisterType<LoggerFactory>().As<ILoggerFactory>().SingleInstance();
             container.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>)).SingleInstance();
 
@@ -38,15 +45,17 @@ namespace Banjo.CLI
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            container.RegisterType<ProcessorFactory>()
+            container.RegisterType<PipelineStageFactory>()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
             container.RegisterType<ArgumentConfigurator>().AsSelf().AsImplementedInterfaces();
             container.RegisterType<ResourceTypeProcessorFactory>().AsSelf().AsImplementedInterfaces();
 
-            
+
             container.RegisterType<ClientsProcessor>().AsImplementedInterfaces();
+            container.RegisterType<ResourceServersProcessor>().AsImplementedInterfaces();
+            container.RegisterType<ClientGrantsProcessor>().AsImplementedInterfaces();
             //add more resource type processors as we implement them.
         }
     }

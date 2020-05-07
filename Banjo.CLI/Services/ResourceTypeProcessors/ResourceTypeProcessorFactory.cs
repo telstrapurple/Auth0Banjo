@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Banjo.CLI.Model;
-using Baseline;
 using Microsoft.Extensions.Logging;
 
-namespace Banjo.CLI.Services
+namespace Banjo.CLI.Services.ResourceTypeProcessors
 {
     public class ResourceTypeProcessorFactory
     {
@@ -33,7 +32,13 @@ namespace Banjo.CLI.Services
 
         public IResourceTypeProcessor GetProcessor(ResourceType type)
         {
-            return _processorMap.Get(type.Name);
+            var exists = _processorMap.TryGetValue(type.Name, out var result);
+            if (!exists)
+            {
+                throw new KeyNotFoundException($"No processor registered that can handle resource type {type.Name}");
+            }
+
+            return result;
         }
     }
 }

@@ -1,18 +1,19 @@
 using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
+using Banjo.CLI.Services.ResourceTypeProcessors;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Banjo.CLI.Services.Processors
+namespace Banjo.CLI.Services.PipelineStages
 {
-    public class ProcessorFactory
+    public class PipelineStageFactory
     {
         private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _argOptions;
         private readonly IOverridesSource _overridesSource;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ResourceTypeProcessorFactory _resourceTypeProcessorFactory;
 
-        public ProcessorFactory(
+        public PipelineStageFactory(
             IOptionsMonitor<Auth0ProcessArgsConfig> argOptions,
             IOverridesSource overridesSource,
             ILoggerFactory loggerFactory,
@@ -24,25 +25,30 @@ namespace Banjo.CLI.Services.Processors
             _resourceTypeProcessorFactory = resourceTypeProcessorFactory;
         }
 
-        public IProcessor<Auth0ResourceTemplate> CreateTemplateReader()
+        public IPipelineStage<Auth0ResourceTemplate> CreateTemplateReader()
         {
-            return new TemplateReaderProcessor();
+            return new TemplateReaderPipelineStage();
         }
 
-        public IProcessor<Auth0ResourceTemplate> CreateOverridesProcessor()
+        public IPipelineStage<Auth0ResourceTemplate> CreateOverridesProcessor()
         {
             var overrides = _overridesSource.GetOverrides(_argOptions.CurrentValue.OverrideFilePath);
-            return new ApplyOverridesProcessor(overrides);
+            return new ApplyOverridesPipelineStage(overrides);
         }
 
-        public IProcessor<Auth0ResourceTemplate> CreateOutputProcessor()
+        public IPipelineStage<Auth0ResourceTemplate> CreateOutputProcessor()
         {
-            return new WriteOutputProcessor(_loggerFactory.CreateLogger<WriteOutputProcessor>());
+            return new WriteOutputPipelineStage(_loggerFactory.CreateLogger<WriteOutputPipelineStage>(), _argOptions);
         }
 
-        public IProcessor<Auth0ResourceTemplate> CreateApiExecutor()
+        public IPipelineStage<Auth0ResourceTemplate> CreateApiExecutor()
         {
-            return new ApiExecutorProcessor(_resourceTypeProcessorFactory);
+            return new ApiExecutorPipelineStage(_resourceTypeProcessorFactory);
+        }
+        
+        public IPipelineStage<Auth0ResourceTemplate> CreateVerifier()
+        {
+            return new TemplateVerifierStage(_resourceTypeProcessorFactory, _loggerFactory.CreateLogger<TemplateVerifierStage>());
         }
     }
 }

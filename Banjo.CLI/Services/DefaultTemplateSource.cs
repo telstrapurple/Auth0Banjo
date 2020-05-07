@@ -2,17 +2,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Banjo.CLI.Model;
-using Microsoft.Extensions.Logging;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace Banjo.CLI.Services
 {
     public class DefaultTemplateSource : ITemplateSource
     {
-        private readonly ILogger<ITemplateSource> _logger;
+        private readonly IReporter _reporter;
 
-        public DefaultTemplateSource(ILogger<ITemplateSource> logger)
+        public DefaultTemplateSource(IReporter reporter)
         {
-            _logger = logger;
+            _reporter = reporter;
         }
 
         public IEnumerable<Auth0ResourceTemplate> GetTemplates(string templatesPath, ResourceType templateType)
@@ -21,16 +21,24 @@ namespace Banjo.CLI.Services
             var searchPath = Path.Combine(templatesPath, templateType.DirectoryName);
             if (!Directory.Exists(searchPath))
             {
-                _logger.LogDebug($"No template directory exists for templates for resource type [{templateType.Name}]");
+                _reporter.Verbose($"No template directory exists for templates for resource type [{templateType.Name}]");
                 return new List<Auth0ResourceTemplate>();
             }
 
-            return Directory.EnumerateFiles(searchPath, templateType.FilenamePattern)
+            var foundTemplates = Directory.EnumerateFiles(searchPath, templateType.FilenamePattern)
                 .Select(x => new Auth0ResourceTemplate()
                 {
                     Location = new FileInfo(x),
                     Type = templateType
-                });
+                }).ToList();
+
+            _reporter.Output($"Found {foundTemplates.Count} {templateType.Name} templates.");
+            foreach (var t in foundTemplates)
+            {
+                _reporter.Output($"\t{t.Location.FullName}");
+            }
+
+            return foundTemplates;
         }
     }
 }

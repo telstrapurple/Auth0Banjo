@@ -7,10 +7,16 @@ namespace Banjo.CLI.Model
     {
         public const string DefaultTemplateFilePattern = "*.template.json";
 
-        public static readonly ResourceType Clients = new ResourceType("clients", x => x.Clients);
-        public static readonly ResourceType ResourceServers = new ResourceType("resource-servers", x => x.ResourceServers);
+        public static readonly ResourceType Clients = new ResourceType("Client", "clients", x => x.Clients);
+        public static readonly ResourceType ResourceServers = new ResourceType("Resource Server", "resource-servers", x => x.ResourceServers);
+        public static readonly ResourceType ClientGrants = new ResourceType("Client Grant", "grants", x => x.Grants);
 
-        public static readonly IReadOnlyList<ResourceType> SupportedResourceTypes = new[] { Clients };
+        public static readonly IReadOnlyList<ResourceType> SupportedResourceTypes = new[]
+        {
+            Clients, 
+            ResourceServers,
+            ClientGrants, 
+        };
 
         public string Name { get; }
         public string DirectoryName { get; }
@@ -20,18 +26,13 @@ namespace Banjo.CLI.Model
         private ResourceType(
             string name,
             string directoryName,
-            string filenamePattern,
-            Func<Overrides, IEnumerable<TemplateOverride>> overridesAccessor)
+            Func<Overrides, IEnumerable<TemplateOverride>> overridesAccessor,
+            string filenamePattern = DefaultTemplateFilePattern)
         {
             Name = name;
             DirectoryName = directoryName;
             FilenamePattern = filenamePattern;
             OverridesAccessor = overridesAccessor;
-        }
-
-        private ResourceType(string directoryName, Func<Overrides, IEnumerable<TemplateOverride>> overridesAccessor)
-            : this(directoryName, directoryName, DefaultTemplateFilePattern, overridesAccessor)
-        {
         }
     }
 }

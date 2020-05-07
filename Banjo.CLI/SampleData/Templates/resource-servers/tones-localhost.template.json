@@ -1,5 +1,5 @@
 {
-  "name": "Tones localhost decipher rest api",
+  "name": "Tones localhost rest api",
   "identifier": "local.rest.tones.com",
   "allow_offline_access": false,
   "skip_consent_for_verifiable_first_party_clients": true,

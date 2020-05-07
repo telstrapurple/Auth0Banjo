@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Banjo.CLI.Model;
 
-namespace Banjo.CLI.Services.Processors
+namespace Banjo.CLI.Services.PipelineStages
 {
-    public class ApplyOverridesProcessor : IProcessor<Auth0ResourceTemplate>
+    public class ApplyOverridesPipelineStage : IPipelineStage<Auth0ResourceTemplate>
     {
         private readonly Overrides _overrides;
 
-        public ApplyOverridesProcessor(Overrides overrides)
+        public ApplyOverridesPipelineStage(Overrides overrides)
         {
             _overrides = overrides;
         }
