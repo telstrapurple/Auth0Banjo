@@ -32,13 +32,6 @@ namespace Banjo.CLI
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            container.RegisterGeneric(typeof(TemplateReaderOld<>))
-                .As(typeof(ITemplateReaderOld<>));
-
-            container.RegisterType<ClientsProcessor>()
-                .AsSelf()
-                .AsImplementedInterfaces();
-
             container.RegisterType<HttpClientManagementConnection>().AsImplementedInterfaces().SingleInstance();
 
             container.RegisterGeneric(typeof(Auth0ResourceTemplateToApiModelConverter<>))
@@ -52,6 +45,7 @@ namespace Banjo.CLI
             container.RegisterType<ArgumentConfigurator>().AsSelf().AsImplementedInterfaces();
             container.RegisterType<ResourceTypeProcessorFactory>().AsSelf().AsImplementedInterfaces();
 
+            
             container.RegisterType<ClientsProcessor>().AsImplementedInterfaces();
             //add more resource type processors as we implement them.
         }
