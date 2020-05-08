@@ -7,7 +7,7 @@
   "cross_origin_auth": false,
   "allowed_clients": [],
   "callbacks": [
-    "hello %%NAME%% %%environmentname%%"
+    "https://%%ENVIRONMENTNAME%%.tones.purple.telstra.com"
   ],
   "native_social_login": {
     "apple": {

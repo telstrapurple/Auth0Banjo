@@ -13,6 +13,8 @@ namespace Banjo.CLI.Model
 
         public static readonly IReadOnlyList<ResourceType> SupportedResourceTypes = new[]
         {
+            //order is important.
+            //For instance, the client and resource-server resource must exist for the client-grant to be created to link them.
             Clients, 
             ResourceServers,
             ClientGrants, 

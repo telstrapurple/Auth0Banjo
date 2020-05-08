@@ -47,7 +47,7 @@ namespace Banjo.CLI.Services.PipelineStages
 
         public IPipelineStage<Auth0ResourceTemplate> CreateApiExecutor()
         {
-            return new ApiExecutorPipelineStage(_resourceTypeProcessorFactory);
+            return new ApiExecutorPipelineStage(_resourceTypeProcessorFactory, _argOptions, _reporter);
         }
         
         public IPipelineStage<Auth0ResourceTemplate> CreateVerifier()

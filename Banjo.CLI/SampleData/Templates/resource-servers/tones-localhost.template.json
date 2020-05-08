@@ -1,6 +1,6 @@
 {
   "name": "%%NAME%% %%ENVIRONMENTNAME%% localhost rest api",
-  "identifier": "local.rest.tones.com",
+  "identifier": "%%ENVIRONMENTNAME%%.rest.tones.com",
   "allow_offline_access": false,
   "skip_consent_for_verifiable_first_party_clients": true,
   "token_lifetime": 86400,
