@@ -9,6 +9,7 @@ namespace Banjo.CLI.Model
         public FileInfo Location { get; set; }
         public string Filename => Location?.Name;
         public JToken Template { get; set; }
+        public Overrides Overrides { get; set; }
         public bool OverridesApplied { get; set; } = false;
         public bool ReplacementsApplied { get; set; } = false;
         public bool ApiCallsProcessed { get; set; } = false;

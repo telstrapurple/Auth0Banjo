@@ -1,4 +1,8 @@
 {
+  "replacements": {
+    "name": "tones", //UPPER, lower, or miXEd -case keys, Banjo will generate original+upper+lower -case versions
+    "environmentname": "DEV"
+  },
   "clients": [
     {
       "name": "tones-localhost.template.json",
@@ -11,8 +15,8 @@
 //          }
 //        },
 //        {
-//          "jsonpath": "jwt_configuration.lifetime_in_seconds",
-//          "replacement": "somethingsomething"
+//          "jsonpath": "jwt_configuration.alg",
+//          "replacement": "%%NAME%%"
 //        }
       ]
     }

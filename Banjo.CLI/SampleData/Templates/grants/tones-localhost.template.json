@@ -2,7 +2,7 @@
   //Management API requires client_id to be the id of the client. Banjo will look
   //up the id of the client at runtime and replace the client_id value here with
   //the id value discovered at runtime.
-  "client_id": "Tones localhost rest api (Test Application)",
+  "client_id": "%%ENVIRONMENTNAME%% localhost rest api (For %%NAME%%)",
   "audience": "local.rest.tones.com",
   "scope": []
 }

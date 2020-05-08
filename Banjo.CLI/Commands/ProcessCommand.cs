@@ -105,6 +105,7 @@ namespace Banjo.CLI.Commands
             {
                 pipelineStageFactory.CreateTemplateReader(),
                 pipelineStageFactory.CreateOverridesProcessor(),
+                pipelineStageFactory.CreateTokenReplacementStage(),
                 pipelineStageFactory.CreateOutputProcessor(),
                 pipelineStageFactory.CreateVerifier()
             };

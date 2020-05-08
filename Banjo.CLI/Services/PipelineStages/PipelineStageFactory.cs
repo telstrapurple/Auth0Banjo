@@ -54,5 +54,10 @@ namespace Banjo.CLI.Services.PipelineStages
         {
             return new TemplateVerifierStage(_resourceTypeProcessorFactory, _loggerFactory.CreateLogger<TemplateVerifierStage>());
         }
+        
+        public IPipelineStage<Auth0ResourceTemplate> CreateTokenReplacementStage()
+        {
+            return new StringReplacementStage();
+        } 
     }
 }

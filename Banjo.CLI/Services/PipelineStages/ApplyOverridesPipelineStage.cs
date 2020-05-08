@@ -27,6 +27,8 @@ namespace Banjo.CLI.Services.PipelineStages
                 //if no overrides, no-op and return
                 return t;
             }
+            
+            t.Overrides = _overrides;
 
             var candidateOverrides = t.Type.OverridesAccessor.Invoke(_overrides) ?? new List<TemplateOverride>();
             var overrides = candidateOverrides.Where(x => x.TemplateName == t.Filename).SelectMany(x => x.Overrides).ToList();

@@ -6,6 +6,9 @@ namespace Banjo.CLI.Model
 {
     public class Overrides
     {
+        [JsonProperty("replacements")]
+        public Dictionary<string, string> Replacements { get; set; }
+
         [JsonProperty("clients")]
         public IEnumerable<TemplateOverride> Clients { get; set; }
 

@@ -1,12 +1,14 @@
 {
   "is_token_endpoint_ip_header_trusted": false,
-  "name": "Tones localhost rest api (Test Application)",
+  "name": "%%ENVIRONMENTNAME%% localhost rest api (For %%NAME%%)",
   "is_first_party": true,
   "oidc_conformant": true,
   "sso_disabled": false,
   "cross_origin_auth": false,
   "allowed_clients": [],
-  "callbacks": [],
+  "callbacks": [
+    "hello %%NAME%% %%environmentname%%"
+  ],
   "native_social_login": {
     "apple": {
       "enabled": false
