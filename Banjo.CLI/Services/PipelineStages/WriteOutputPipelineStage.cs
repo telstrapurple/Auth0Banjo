@@ -1,26 +1,50 @@
+using System.IO;
 using System.Threading.Tasks;
 using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
-using Microsoft.Extensions.Logging;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Banjo.CLI.Services.PipelineStages
 {
     public class WriteOutputPipelineStage : IPipelineStage<Auth0ResourceTemplate>
     {
-        private ILogger<WriteOutputPipelineStage> _logger;
-        private IOptionsMonitor<Auth0ProcessArgsConfig> _args;
+        private readonly IReporter _reporter;
+        private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _args;
 
-        public WriteOutputPipelineStage(ILogger<WriteOutputPipelineStage> logger, IOptionsMonitor<Auth0ProcessArgsConfig> args)
+        public WriteOutputPipelineStage(IReporter reporter, IOptionsMonitor<Auth0ProcessArgsConfig> args)
         {
-            _logger = logger;
+            _reporter = reporter;
             _args = args;
         }
 
         public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
         {
-            // _logger.LogInformation(JsonConvert.SerializeObject(t.Template, Formatting.Indented));
+            var serialised = JsonConvert.SerializeObject(t.Template, Formatting.Indented);
+            _reporter.Verbose($"{t.Type.Name} - {t.Filename}");
+            _reporter.Verbose(serialised);
+            _reporter.Verbose("");
+            
+            if (!string.IsNullOrEmpty(_args.CurrentValue.OutputPath))
+            {
+                await WriteOutput(t, serialised);
+            }
+            
             return t;
+        }
+        
+        private async Task WriteOutput(Auth0ResourceTemplate t, string serialisedContent)
+        {
+            var dir = Directory.CreateDirectory(_args.CurrentValue.OutputPath);
+            var fullPath = dir.FullName;
+            
+            var templateDir = Directory.CreateDirectory(Path.Join(fullPath, t.Type.DirectoryName));
+
+            var outputPath = Path.Join(templateDir.FullName, t.Filename);
+            _reporter.Output($"Writing effective template result for {t.Type.Name} template {t.Filename}:");
+            _reporter.Output($"\t{outputPath}");
+            await File.WriteAllTextAsync(outputPath , serialisedContent);
         }
     }
 }

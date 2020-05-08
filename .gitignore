@@ -7,3 +7,6 @@ riderModule.iml
 /*.sln.DotSettings.user
 /Banjo.CLI/Banjo.CLI.*.nupkg
 .vs/
+
+# typical working area for outputting sample data with the -out flag
+/Banjo.CLI/SampleData/processedoutput

@@ -1,6 +1,7 @@
 using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
 using Banjo.CLI.Services.ResourceTypeProcessors;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -12,17 +13,20 @@ namespace Banjo.CLI.Services.PipelineStages
         private readonly IOverridesSource _overridesSource;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ResourceTypeProcessorFactory _resourceTypeProcessorFactory;
+        private readonly IReporter _reporter;
 
         public PipelineStageFactory(
             IOptionsMonitor<Auth0ProcessArgsConfig> argOptions,
             IOverridesSource overridesSource,
             ILoggerFactory loggerFactory,
-            ResourceTypeProcessorFactory resourceTypeProcessorFactory)
+            ResourceTypeProcessorFactory resourceTypeProcessorFactory, 
+            IReporter reporter)
         {
             _argOptions = argOptions;
             _overridesSource = overridesSource;
             _loggerFactory = loggerFactory;
             _resourceTypeProcessorFactory = resourceTypeProcessorFactory;
+            _reporter = reporter;
         }
 
         public IPipelineStage<Auth0ResourceTemplate> CreateTemplateReader()
@@ -38,7 +42,7 @@ namespace Banjo.CLI.Services.PipelineStages
 
         public IPipelineStage<Auth0ResourceTemplate> CreateOutputProcessor()
         {
-            return new WriteOutputPipelineStage(_loggerFactory.CreateLogger<WriteOutputPipelineStage>(), _argOptions);
+            return new WriteOutputPipelineStage(_reporter, _argOptions);
         }
 
         public IPipelineStage<Auth0ResourceTemplate> CreateApiExecutor()
