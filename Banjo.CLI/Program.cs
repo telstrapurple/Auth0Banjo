@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Banjo.CLI.Commands;
 using Banjo.CLI.Configuration;
+using Banjo.CLI.Services;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +29,11 @@ namespace Banjo.CLI
             return await Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureLogging((context, builder) => { builder.SetMinimumLevel(LogLevel.Information).AddConsole(); })
-                .ConfigureAppConfiguration((hostingContext, config) => { config.AddInMemoryCollection(); })
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    
+                    config.Add(new ReloadingMemoryConfigurationSource());
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<Auth0AuthenticationConfig>(hostContext.Configuration.GetSection("Auth0"));

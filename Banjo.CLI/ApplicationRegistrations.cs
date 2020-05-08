@@ -7,6 +7,7 @@ using Banjo.CLI.Services.PipelineStages;
 using Banjo.CLI.Services.ResourceTypeProcessors;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 // ReSharper disable RedundantTypeArgumentsOfMethod - Type arguments make it easier to see exactly what is being registered
 
@@ -17,8 +18,11 @@ namespace Banjo.CLI
         public static void RegisterApplicationServices(this ContainerBuilder container)
         {
             container.Register<ConsoleReporter>(
-                    //todo add a verbose option and pull from the Auth0ProcessArgsConfig
-                    context => new ConsoleReporter(context.Resolve<IConsole>(), false, false))
+                    context =>
+                    {
+                        var args = context.Resolve<IOptionsMonitor<Auth0ProcessArgsConfig>>();
+                        return new ConsoleReporter(context.Resolve<IConsole>(), args?.CurrentValue.Verbose ?? false, false);
+                    })
                 .AsImplementedInterfaces();
             container.Register<PhysicalConsole>(context => PhysicalConsole.Singleton as PhysicalConsole)
                 .SingleInstance()

@@ -8,7 +8,7 @@ using Banjo.CLI.Model;
 using Banjo.CLI.Services;
 using Banjo.CLI.Services.PipelineStages;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Banjo.CLI.Commands
 {
@@ -53,67 +53,74 @@ namespace Banjo.CLI.Commands
             Description = "Verify the resulting effective templates, but do not make any Auth0 API calls. Should be used in conjunction with -out|--output {output-path}")]
         public bool Verify { get; set; } = false;
 
-        private readonly ITemplateSource _templateSource;
-        private readonly PipelineStageFactory _pipelineStageFactory;
-        private readonly ArgumentConfigurator _configurator;
-        private readonly ILogger<ProcessCommand> _logger;
+        [Option(
+            CommandOptionType.NoValue,
+            LongName = "verbose",
+            ShortName = "v",
+            Description = "Enable Verbose level output")]
+        public bool Verbose { get; set; } = false;
 
-        public ProcessCommand(
-            ITemplateSource templateSource,
-            PipelineStageFactory pipelineStageFactory,
-            ArgumentConfigurator configurator,
-            ILogger<ProcessCommand> logger)
+        public ProcessCommand()
         {
-            _templateSource = templateSource;
-            _pipelineStageFactory = pipelineStageFactory;
-            _configurator = configurator;
-            _logger = logger;
         }
 
         public override async Task OnExecuteAsync(CommandLineApplication app)
         {
-            Console.WriteLine($"{nameof(TemplatesPath)} = {TemplatesPath}");
-            Console.WriteLine($"{nameof(OverridePath)} = {OverridePath}");
-            Console.WriteLine($"{nameof(ProcessedOutputPath)} = {ProcessedOutputPath}");
-            Console.WriteLine($"{nameof(DryRun)} = {DryRun}");
-
-            _configurator.AddConfiguration(new Auth0ProcessArgsConfig
+            ArgumentConfigurator configurator = app.GetRequiredService<ArgumentConfigurator>();
+            configurator.AddConfiguration(new Auth0ProcessArgsConfig
             {
                 DryRun = DryRun,
                 OutputPath = ProcessedOutputPath,
                 OverrideFilePath = OverridePath,
-                TemplateInputPath = TemplatesPath
+                TemplateInputPath = TemplatesPath,
+                Verbose = Verbose
             });
+
+            //resolve the things we need _after_ we've set the parsed configuration using the ArgumentConfigurator.
+            //Depending on how the instances are constructed, if constructed in time to be injected into this classes
+            //constructor then they might have be built with stale configuration. (ConsoleReporter I'm looking at you)
+            //
+            //Generally, Banjo-specific classes can avoid working with stale config by accepting an
+            //IOptionMonitor<Auth0ProcessArgsConfig>
+            ITemplateSource templateSource = app.GetRequiredService<ITemplateSource>();
+            PipelineStageFactory pipelineStageFactory = app.GetRequiredService<PipelineStageFactory>();
+
+            var reporter = app.GetRequiredService<IReporter>();
+
+            reporter.Verbose($"{nameof(TemplatesPath)} = {TemplatesPath}");
+            reporter.Verbose($"{nameof(OverridePath)} = {OverridePath}");
+            reporter.Verbose($"{nameof(ProcessedOutputPath)} = {ProcessedOutputPath}");
+            reporter.Verbose($"{nameof(DryRun)} = {DryRun}");
 
             if (Verify && string.IsNullOrEmpty(ProcessedOutputPath))
             {
-                _logger.LogWarning(
+                reporter.Warn(
                     "Banjo will verify the result of processing the templates, but will not write the " +
                     "result of the processed template, which will make it hard to debug any issues if the " +
                     "templates are found to be not valid.");
-                _logger.LogWarning("Recommend also setting -out|--output {output-path} to have Banjo " +
-                                   "write the effective templates.");
+                reporter.Warn("Recommend also setting -out|--output {output-path} to have Banjo " +
+                              "write the effective templates.");
             }
 
             var pipelineStages = new List<IPipelineStage<Auth0ResourceTemplate>>
             {
-                _pipelineStageFactory.CreateTemplateReader(),
-                _pipelineStageFactory.CreateOverridesProcessor(),
-                _pipelineStageFactory.CreateOutputProcessor(),
-                _pipelineStageFactory.CreateVerifier()
+                pipelineStageFactory.CreateTemplateReader(),
+                pipelineStageFactory.CreateOverridesProcessor(),
+                pipelineStageFactory.CreateOutputProcessor(),
+                pipelineStageFactory.CreateVerifier()
             };
 
             if (Verify == false)
             {
                 //if Verify == true, then user has explicitly passed '-y', which means no API calls.
                 //But in this block, it's false, so we need to do the api calls.
-                pipelineStages.Add(_pipelineStageFactory.CreateApiExecutor());
+                pipelineStages.Add(pipelineStageFactory.CreateApiExecutor());
             }
 
             var pipeline = new PipelineExecutor(pipelineStages);
 
             var templatesToProcess = ResourceType.SupportedResourceTypes
-                .SelectMany(x => _templateSource.GetTemplates(TemplatesPath, x))
+                .SelectMany(x => templateSource.GetTemplates(TemplatesPath, x))
                 .ToList();
 
             await pipeline.ExecuteAsync(templatesToProcess);

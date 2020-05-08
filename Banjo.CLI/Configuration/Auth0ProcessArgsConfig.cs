@@ -6,5 +6,6 @@ namespace Banjo.CLI.Configuration
         public string TemplateInputPath { get; set; }
         public string OverrideFilePath { get; set; }
         public bool DryRun { get; set; }
+        public bool Verbose { get; set; }
     }
 }

@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
+using Banjo.CLI.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Memory;
 
 namespace Banjo.CLI.Configuration
 {
@@ -15,11 +16,15 @@ namespace Banjo.CLI.Configuration
 
         public void AddConfiguration(Auth0ProcessArgsConfig config)
         {
-            var memoryProvider = _configRoot?.Providers.FirstOrDefault(x => x.GetType() == typeof(MemoryConfigurationProvider));
-            memoryProvider?.Set(nameof(Auth0ProcessArgsConfig.DryRun), config.DryRun.ToString());
-            memoryProvider?.Set(nameof(Auth0ProcessArgsConfig.OutputPath), config.OutputPath);
-            memoryProvider?.Set(nameof(Auth0ProcessArgsConfig.OverrideFilePath), config.OverrideFilePath);
-            memoryProvider?.Set(nameof(Auth0ProcessArgsConfig.TemplateInputPath), config.TemplateInputPath);
+            var memoryProvider = _configRoot?.Providers.FirstOrDefault(x => x is ReloadingMemoryConfigurationProvider) as ReloadingMemoryConfigurationProvider;
+            memoryProvider?.SetMany(new Dictionary<string, string>
+            {
+                { nameof(Auth0ProcessArgsConfig.DryRun), config.DryRun.ToString() },
+                { nameof(Auth0ProcessArgsConfig.OutputPath), config.OutputPath },
+                { nameof(Auth0ProcessArgsConfig.OverrideFilePath), config.OverrideFilePath },
+                { nameof(Auth0ProcessArgsConfig.TemplateInputPath), config.TemplateInputPath },
+                { nameof(Auth0ProcessArgsConfig.Verbose), config.Verbose.ToString() }
+            });
         }
     }
 }
