@@ -26,9 +26,14 @@ namespace Banjo.CLI.Services
             _reporter = reporter;
         }
 
-        public virtual void Verify(Auth0ResourceTemplate template)
+        public virtual async Task Validate(Auth0ResourceTemplate template)
         {
             _converter.Convert(template);
+        }
+
+        public virtual async Task Preprocess(Auth0ResourceTemplate template)
+        {
+            //no-op
         }
 
         public abstract Task ProcessAsync(Auth0ResourceTemplate template);
@@ -58,7 +63,7 @@ namespace Banjo.CLI.Services
             }
             else
             {
-                T output = await creator.Invoke();
+                var output = await creator.Invoke();
                 StringBuilder sb = new StringBuilder($"Finished creating new {Type.Name}: \"{name}\".");
                 if (id != null)
                 {

@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
 using Banjo.CLI.Services.ResourceTypeProcessors;
@@ -52,12 +54,49 @@ namespace Banjo.CLI.Services.PipelineStages
         
         public IPipelineStage<Auth0ResourceTemplate> CreateVerifier()
         {
-            return new TemplateVerifierStage(_resourceTypeProcessorFactory, _loggerFactory.CreateLogger<TemplateVerifierStage>());
+            return new TemplateValidatorStage(_resourceTypeProcessorFactory, _loggerFactory.CreateLogger<TemplateValidatorStage>());
         }
         
         public IPipelineStage<Auth0ResourceTemplate> CreateTokenReplacementStage()
         {
             return new StringReplacementStage();
-        } 
+        }
+
+        public IPipelineStage<Auth0ResourceTemplate> CreateResourceSpecificProcessingStage()
+        {
+            return new ResourcePreProcessorStage(_resourceTypeProcessorFactory, _reporter);
+        }
+    }
+
+    public class ResourcePreProcessorStage : IPipelineStage<Auth0ResourceTemplate>
+    {
+        private readonly ResourceTypeProcessorFactory _processorFactory;
+        private readonly IReporter _reporter;
+
+        public ResourcePreProcessorStage(
+            ResourceTypeProcessorFactory processorFactory, 
+            IReporter reporter)
+        {
+            _processorFactory = processorFactory;
+            _reporter = reporter;
+        }
+
+        public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
+        {
+            var processor = _processorFactory.GetProcessor(t.Type);
+
+            try
+            {
+                await processor.Preprocess(t);
+                t.Preprocessed = true;
+            }
+            catch (Exception e)
+            {
+                _reporter.Error($"Result of preprocessing {t.Type.Name} template {t.Location.FullName} failed with an error.");
+                _reporter.Error(e.Message);
+            }
+
+            return t;
+        }
     }
 }

@@ -10,14 +10,20 @@ namespace Banjo.CLI.Model
         public static readonly ResourceType Clients = new ResourceType("Client", "clients", x => x.Clients);
         public static readonly ResourceType ResourceServers = new ResourceType("Resource Server", "resource-servers", x => x.ResourceServers);
         public static readonly ResourceType ClientGrants = new ResourceType("Client Grant", "grants", x => x.Grants);
+        public static readonly ResourceType Roles = new ResourceType("Role", "roles", x => x.Roles);
+        public static readonly ResourceType Rules = new ResourceType("Rule", "rules", x => x.Rules);
+        public static readonly ResourceType Pages = new ResourceType("Page", "pages", x => x.Pages);
 
         public static readonly IReadOnlyList<ResourceType> SupportedResourceTypes = new[]
         {
             //order is important.
             //For instance, the client and resource-server resource must exist for the client-grant to be created to link them.
-            Clients, 
-            ResourceServers,
-            ClientGrants, 
+            // Clients,
+            // ResourceServers,
+            // ClientGrants,
+            Rules,
+            // Roles,
+            // Pages
         };
 
         public string Name { get; }

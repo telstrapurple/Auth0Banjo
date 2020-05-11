@@ -60,6 +60,8 @@ namespace Banjo.CLI
             container.RegisterType<ClientsProcessor>().AsImplementedInterfaces();
             container.RegisterType<ResourceServersProcessor>().AsImplementedInterfaces();
             container.RegisterType<ClientGrantsProcessor>().AsImplementedInterfaces();
+            container.RegisterType<RolesProcessor>().AsImplementedInterfaces();
+            container.RegisterType<RulesProcessor>().AsImplementedInterfaces();
             //add more resource type processors as we implement them.
         }
     }

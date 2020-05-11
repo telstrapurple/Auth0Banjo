@@ -10,3 +10,4 @@ riderModule.iml
 
 # typical working area for outputting sample data with the -out flag
 /Banjo.CLI/SampleData/processedoutput
+auth0exports/

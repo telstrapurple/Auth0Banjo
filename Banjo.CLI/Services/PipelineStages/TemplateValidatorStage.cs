@@ -6,14 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Banjo.CLI.Services.PipelineStages
 {
-    public class TemplateVerifierStage : IPipelineStage<Auth0ResourceTemplate>
+    public class TemplateValidatorStage : IPipelineStage<Auth0ResourceTemplate>
     {
         private readonly ResourceTypeProcessorFactory _processorFactory;
-        private readonly ILogger<TemplateVerifierStage> _logger;
+        private readonly ILogger<TemplateValidatorStage> _logger;
 
-        public TemplateVerifierStage(
+        public TemplateValidatorStage(
             ResourceTypeProcessorFactory processorFactory, 
-            ILogger<TemplateVerifierStage> logger)
+            ILogger<TemplateValidatorStage> logger)
         {
             _processorFactory = processorFactory;
             _logger = logger;
@@ -25,7 +25,7 @@ namespace Banjo.CLI.Services.PipelineStages
 
             try
             {
-                processor.Verify(t);
+                await processor.Validate(t);
             }
             catch (Exception e)
             {
