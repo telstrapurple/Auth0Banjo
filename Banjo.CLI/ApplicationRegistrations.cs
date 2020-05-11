@@ -44,6 +44,9 @@ namespace Banjo.CLI
             container.RegisterType<ManagementApiClientFactory>()
                 .AsSelf()
                 .AsImplementedInterfaces();
+            
+            container.RegisterType<HttpClientManagementConnection>().AsImplementedInterfaces();
+            container.RegisterDecorator<RateLimitAwareManagementConnection, IManagementConnection>();
 
             container.RegisterType<HttpClientManagementConnection>().AsImplementedInterfaces().SingleInstance();
 
