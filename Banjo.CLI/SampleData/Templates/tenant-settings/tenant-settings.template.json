@@ -1,0 +1,17 @@
+{
+  "enabled_locales": [
+    "en"
+  ],
+  "flags": {
+    "new_universal_login_experience_enabled": false,
+    "universal_login": false,
+    "disable_clickjack_protection_headers": false
+  },
+  "picture_url": "https://purple.telstra.com/content/dam/shared-component-assets/telstra-purple/Tesltra-Purple-footer-logo-black.svg",
+  "universal_login": {
+    "colors": {
+      "page_background": "#123456",
+      "primary": "#06A2CC"
+    }
+  }
+}

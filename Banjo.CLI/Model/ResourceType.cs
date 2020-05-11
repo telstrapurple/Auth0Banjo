@@ -13,6 +13,7 @@ namespace Banjo.CLI.Model
         public static readonly ResourceType Roles = new ResourceType("Role", "roles", x => x.Roles);
         public static readonly ResourceType Rules = new ResourceType("Rule", "rules", x => x.Rules);
         public static readonly ResourceType Pages = new ResourceType("Page", "pages", x => x.Pages);
+        public static readonly ResourceType TenantSettings = new ResourceType("Tenant Settings", "tenant-settings", x => x.TenantSettings);
 
         public static readonly IReadOnlyList<ResourceType> SupportedResourceTypes = new[]
         {
@@ -23,7 +24,8 @@ namespace Banjo.CLI.Model
             // ClientGrants,
             // Rules,
             // Roles,
-            Pages
+            Pages,
+            TenantSettings
         };
 
         public string Name { get; }

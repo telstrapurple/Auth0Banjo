@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,30 +87,6 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
                 default:
                     throw new Auth0InvalidTemplateException("Page name must be one of [login, reset_password]");
             }
-
-            // using var managementClient = await _managementApiClientFactory.CreateAsync();
-            //
-            // //todo support proper pagination - how to do this where every api call is different?!
-            // var results = await managementClient.Rules.GetAllAsync(new GetRulesRequest(), new PaginationInfo());
-            //
-            // var matchingRule = results.FirstOrDefault(x => string.Equals(x.Name, rule.Name));
-            // if (matchingRule == null)
-            // {
-            //     var createRequest = Reflectorisor.CopyMembers<Rule, RuleCreateRequest>(rule);
-            //     await Create(
-            //         async () => await managementClient.Rules.CreateAsync(createRequest),
-            //         request => request.Id,
-            //         rule.Name);
-            // }
-            // else
-            // {
-            //     var updateRequest = Reflectorisor.CopyMembers<Rule, RuleUpdateRequest>(rule);
-            //     await Update(
-            //         async () => await managementClient.Rules.UpdateAsync(matchingRule.Id, updateRequest),
-            //         matchingRule.Id,
-            //         rule.Name
-            //     );
-            // }
         }
 
         private async Task SetLoginPage(BanjoPage page)

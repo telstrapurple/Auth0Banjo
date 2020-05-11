@@ -17,6 +17,8 @@ namespace Banjo.CLI
     {
         public static void RegisterApplicationServices(this ContainerBuilder container)
         {
+            container.RegisterModule<ResourceTypeProcessorModule>();
+            
             container.Register<ConsoleReporter>(
                     context =>
                     {
@@ -55,15 +57,6 @@ namespace Banjo.CLI
 
             container.RegisterType<ArgumentConfigurator>().AsSelf().AsImplementedInterfaces();
             container.RegisterType<ResourceTypeProcessorFactory>().AsSelf().AsImplementedInterfaces();
-
-
-            container.RegisterType<ClientsProcessor>().AsImplementedInterfaces();
-            container.RegisterType<ResourceServersProcessor>().AsImplementedInterfaces();
-            container.RegisterType<ClientGrantsProcessor>().AsImplementedInterfaces();
-            container.RegisterType<RolesProcessor>().AsImplementedInterfaces();
-            container.RegisterType<RulesProcessor>().AsImplementedInterfaces();
-            container.RegisterType<PagesProcessor>().AsImplementedInterfaces();
-            //add more resource type processors as we implement them.
         }
     }
 }

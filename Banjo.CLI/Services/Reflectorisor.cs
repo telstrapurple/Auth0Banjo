@@ -45,11 +45,16 @@ namespace Banjo.CLI.Services
         private static MethodInfo? GetPublicSetter<T>(MethodInfo? getter, string name)
         {
             if (getter == null) return null;
+            
             var matchingProperty = typeof(T).GetProperty(name);
             var candidateSetter = matchingProperty?.GetSetMethod();
+            
             if (candidateSetter == null) return null;
+            
             var setterParams = candidateSetter.GetParameters();
+            
             if (setterParams.Length != 1) return null;
+            
             return setterParams[0].ParameterType == getter.ReturnType ? candidateSetter : null;
         }
     }

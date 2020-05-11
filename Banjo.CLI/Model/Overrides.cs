@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Auth0.ManagementApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
