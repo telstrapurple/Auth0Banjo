@@ -6,7 +6,7 @@ namespace Banjo.CLI.Services.PipelineStages
 {
     public class PipelineExecutor
     {
-        private List<IPipelineStage<Auth0ResourceTemplate>> _pipeline;
+        private readonly List<IPipelineStage<Auth0ResourceTemplate>> _pipeline;
 
         public PipelineExecutor(List<IPipelineStage<Auth0ResourceTemplate>> pipeline)
         {

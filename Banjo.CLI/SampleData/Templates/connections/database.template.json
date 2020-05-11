@@ -1,0 +1,23 @@
+{
+  "options": {
+    "mfa": {
+      "active": true,
+      "return_enroll_settings": true
+    },
+    "passwordPolicy": "good",
+    "strategy_version": 2,
+    "brute_force_protection": true
+  },
+  "strategy": "auth0",
+  "name": "%%NAME%%-%%ENVIRONMENTNAME%%-Custom-User-Database",
+  "is_domain_connection": false,
+  "realms": [
+    "%%NAME%%-%%ENVIRONMENTNAME%%-Custom-User-Database"
+  ],
+  //Management API requires enabled_clients. Banjo allows you to set a list of enabled_clients_match_conditions that
+  //are compared to names of the available clients discovered at runtime in order to locate their client ids.
+  "enabled_clients_match_conditions": [
+    "Tones localhost rest api (Test Application)",
+    "%%ENVIRONMENTNAME localhost rest api (For [a-zA-Z0-9]+)"
+  ]
+}

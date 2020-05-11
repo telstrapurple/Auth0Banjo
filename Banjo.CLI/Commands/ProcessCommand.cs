@@ -47,13 +47,6 @@ namespace Banjo.CLI.Commands
 
         [Option(
             CommandOptionType.NoValue,
-            LongName = "validate",
-            ShortName = "a",
-            Description = "Validate the resulting effective templates, but do not make any Auth0 API calls. Should be used in conjunction with -out|--output {output-path}")]
-        public bool Validate { get; set; } = false;
-
-        [Option(
-            CommandOptionType.NoValue,
             LongName = "verbose",
             ShortName = "v",
             Description = "Enable Verbose level output")]
@@ -91,10 +84,10 @@ namespace Banjo.CLI.Commands
             reporter.Verbose($"{nameof(ProcessedOutputPath)} = {ProcessedOutputPath}");
             reporter.Verbose($"{nameof(DryRun)} = {DryRun}");
 
-            if (Validate && string.IsNullOrEmpty(ProcessedOutputPath))
+            if (DryRun && string.IsNullOrEmpty(ProcessedOutputPath))
             {
                 reporter.Warn(
-                    "Banjo will validate the result of processing the templates, but will not write the " +
+                    "Banjo will dry-run the result of processing the templates, but will not write the " +
                     "result of the processed template, which will make it hard to debug any issues if the " +
                     "templates are found to be not valid.");
                 reporter.Warn("Recommend also setting -out|--output {output-path} to have Banjo " +
@@ -106,17 +99,11 @@ namespace Banjo.CLI.Commands
                 pipelineStageFactory.CreateTemplateReader(),
                 pipelineStageFactory.CreateOverridesProcessor(),
                 pipelineStageFactory.CreateTokenReplacementStage(),
-                pipelineStageFactory.CreateResourceSpecificProcessingStage(),
+                pipelineStageFactory.CreateResourcePreprocessingStage(),
                 pipelineStageFactory.CreateOutputProcessor(),
-                pipelineStageFactory.CreateVerifier()
+                pipelineStageFactory.CreateVerifier(),
+                pipelineStageFactory.CreateApiExecutor()
             };
-
-            if (Validate == false)
-            {
-                //if Validate == true, then user has explicitly passed '-a', which means no API calls.
-                //But in this block, it's false, so we need to do the api calls.
-                pipelineStages.Add(pipelineStageFactory.CreateApiExecutor());
-            }
 
             var pipeline = new PipelineExecutor(pipelineStages);
 

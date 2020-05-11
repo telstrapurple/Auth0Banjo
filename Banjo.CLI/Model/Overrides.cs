@@ -30,7 +30,8 @@ namespace Banjo.CLI.Model
         [JsonProperty("rules")]
         public IEnumerable<TemplateOverride> Rules { get; set; }
         
-        
+        [JsonProperty("database-connections")]
+        public IEnumerable<TemplateOverride> DatabaseConnections { get; set; }
     }
 
     public class TemplateOverride

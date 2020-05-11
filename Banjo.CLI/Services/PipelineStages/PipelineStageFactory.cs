@@ -62,7 +62,7 @@ namespace Banjo.CLI.Services.PipelineStages
             return new StringReplacementStage();
         }
 
-        public IPipelineStage<Auth0ResourceTemplate> CreateResourceSpecificProcessingStage()
+        public IPipelineStage<Auth0ResourceTemplate> CreateResourcePreprocessingStage()
         {
             return new ResourcePreProcessorStage(_resourceTypeProcessorFactory, _reporter);
         }
