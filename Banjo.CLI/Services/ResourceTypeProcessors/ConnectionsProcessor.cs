@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Banjo.CLI.Services.ResourceTypeProcessors
 {
-    public class DatabaseConnectionsProcessor : AbstractSingleTypeResourceTypeProcessor<Connection>
+    public class ConnectionsProcessor : AbstractSingleTypeResourceTypeProcessor<Connection>
     {
         protected override ResourceType Type { get; } = ResourceType.Connections;
 
@@ -23,7 +23,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
         private readonly IConverter<Auth0ResourceTemplate, Connection> _converter;
         private readonly IReporter _reporter;
 
-        public DatabaseConnectionsProcessor(
+        public ConnectionsProcessor(
             IOptionsMonitor<Auth0ProcessArgsConfig> args,
             IConverter<Auth0ResourceTemplate, Connection> converter,
             IReporter reporter,
