@@ -33,5 +33,6 @@
     <Folder Include="SampleData\Overrides" />
     <Folder Include="SampleData\Templates\clients" />
     <Folder Include="SampleData\Templates\resource-servers" />
+    <Folder Include="SampleData\Templates\rules" />
   </ItemGroup>
 </Project>

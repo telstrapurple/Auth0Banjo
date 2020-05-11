@@ -16,6 +16,7 @@ namespace Banjo.CLI.Services.PipelineStages
             if ((t.Overrides?.Replacements?.Count ?? 0) == 0)
             {
                 //no overrides or no replacements defined in it, so bail out.
+                t.ReplacementsApplied = true;
                 return t;
             }
 
@@ -31,6 +32,7 @@ namespace Banjo.CLI.Services.PipelineStages
                 }
             }
 
+            t.ReplacementsApplied = true;
             return t;
         }
     }

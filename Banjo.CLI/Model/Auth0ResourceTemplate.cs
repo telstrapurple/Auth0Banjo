@@ -12,6 +12,7 @@ namespace Banjo.CLI.Model
         public Overrides Overrides { get; set; }
         public bool OverridesApplied { get; set; } = false;
         public bool ReplacementsApplied { get; set; } = false;
+        public bool Preprocessed { get; set; } = false;
         public bool ApiCallsProcessed { get; set; } = false;
     }
 }

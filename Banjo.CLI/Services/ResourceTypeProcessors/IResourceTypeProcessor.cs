@@ -7,7 +7,9 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
     {
         public ResourceType[] ResourceTypes { get; }
 
-        public void Verify(Auth0ResourceTemplate template);
+        public Task Preprocess(Auth0ResourceTemplate template);
+        
+        public Task Validate(Auth0ResourceTemplate template);
         
         public Task ProcessAsync(Auth0ResourceTemplate template);
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Auth0.ManagementApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -20,6 +21,17 @@ namespace Banjo.CLI.Model
 
         [JsonProperty("tenant-settings")]
         public IEnumerable<TemplateOverride> TenantSettings { get; set; }
+
+        [JsonProperty("roles")]
+        public IEnumerable<TemplateOverride> Roles { get; set; }
+        
+        [JsonProperty("pages")]
+        public IEnumerable<TemplateOverride> Pages { get; set; }
+        
+        [JsonProperty("rules")]
+        public IEnumerable<TemplateOverride> Rules { get; set; }
+        
+        
     }
 
     public class TemplateOverride

@@ -1,0 +1,5 @@
+{
+  "name": "IsAdmin",
+  "description": "Is the user an administrator by banjo",
+  "permissions": []
+}

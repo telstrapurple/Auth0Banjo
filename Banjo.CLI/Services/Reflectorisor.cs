@@ -1,3 +1,4 @@
+#nullable enable
 using System.Linq;
 using System.Reflection;
 
@@ -14,19 +15,19 @@ namespace Banjo.CLI.Services
         /// Creates a new instance of the <c>To</c> type.
         /// </summary>
         /// <param name="from">the instance to copy properties from</param>
-        /// <typeparam name="From">The type of the instance to copy properties from</typeparam>
-        /// <typeparam name="To">The type of the required return type</typeparam>
+        /// <typeparam name="TFrom">The type of the instance to copy properties from</typeparam>
+        /// <typeparam name="TTo">The type of the required return type</typeparam>
         /// <returns>A new instance of the To type with the matching properties copied from <c>from</c></returns>
-        public static To CopyMembers<From, To>(From from) where To : new()
+        public static TTo CopyMembers<TFrom, TTo>(TFrom from) where TTo : new()
         {
-            var to = new To();
+            var to = new TTo();
 
-            foreach (var property in typeof(To).GetProperties().ToList())
+            foreach (var property in typeof(TTo).GetProperties().ToList())
             {
-                MethodInfo? getter = GetPublicGetter<From>(property.Name);
+                MethodInfo? getter = GetPublicGetter<TFrom>(property.Name);
                 if (getter == null) continue;
 
-                MethodInfo? setter = GetPublicSetter<To>(getter, property.Name);
+                MethodInfo? setter = GetPublicSetter<TTo>(getter, property.Name);
                 if (setter == null) continue;
 
                 var result = getter.Invoke(from, null);

@@ -41,3 +41,13 @@ Or to update an already installed tool from locally built source
 ```
 dotnet tool update -g banjo.cli --add-source ./
 ```
+
+## Downloading existing resources as templates
+* Install and configure the Auth0 Deploy CLI tool, https://auth0.com/docs/extensions/deploy-cli
+* Run the Auth0 Deploy CLI tool `export` command with `--format directory` to export the resources as a directory tree containing 1 file per resource
+
+The exported .json files form the basis of your template files.
+
+```powershell
+a0deploy export --config_file {path-to-a0-secrets-file} --format directory --output_folder {output-folder}
+```
