@@ -21,9 +21,9 @@ namespace Banjo.CLI.Model
             // Clients,
             // ResourceServers,
             // ClientGrants,
-            Rules,
+            // Rules,
             // Roles,
-            // Pages
+            Pages
         };
 
         public string Name { get; }
