@@ -98,8 +98,8 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
                 IsGlobal = true, Fields = "client_id,name", IncludeFields = true
                 
             };
-            var globalClients = await managementClient.Clients.GetAllAsync(getClientsRequest, new PaginationInfo());
-            var globalClient = globalClients.FirstOrDefault();
+            var globalClients = managementClient.Clients.GetAllAsync(getClientsRequest, Reporter);
+            var globalClient = await globalClients.FirstOrDefaultAsync();
             if (globalClient == null)
             {
                 throw new Auth0ResourceNotFoundException("No global client found.");

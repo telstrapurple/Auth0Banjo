@@ -18,6 +18,10 @@
       "name": "tones-localhost.template.json",
       "overrides": [
 //        {
+//          "jsonpath": "name",
+//          "replacement": "test app 5"
+//        }
+//        {
 //          "jsonpath": "jwt_configuration.alg",
 //          "replacement": {
 //            "name1": "value1",

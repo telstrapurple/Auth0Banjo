@@ -68,9 +68,9 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             {
                 IncludeFields = true, Fields = "name,id"
             };
-            var results = await managementClient.Rules.GetAllAsync(getRulesRequest, new PaginationInfo());
+            var results = managementClient.Rules.GetAllAsync(getRulesRequest, Reporter);
 
-            var matchingRule = results.FirstOrDefault(x => string.Equals(x.Name, rule.Name));
+            var matchingRule = await results.FirstOrDefaultAsync(x => string.Equals(x.Name, rule.Name));
             if (matchingRule == null)
             {
                 var createRequest = Reflectorisor.CopyMembers<Rule, RuleCreateRequest>(rule);

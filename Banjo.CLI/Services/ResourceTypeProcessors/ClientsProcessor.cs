@@ -32,17 +32,16 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
             var client = _converter.Convert(template);
 
-            //todo support proper pagination - how to do this where every api call is different?!
             var getClientsRequest = new GetClientsRequest
             {
                 IsGlobal = false, IncludeFields = true, Fields = "name,client_id" 
                 
             };
-            var results = await managementClient.Clients.GetAllAsync(getClientsRequest, new PaginationInfo());
+            var results = managementClient.Clients.GetAllAsync(getClientsRequest, Reporter);
 
             FixIllegalOptions(client);
 
-            var matchingClient = results.FirstOrDefault(x => string.Equals(x.Name, client.Name));
+            var matchingClient = await results.FirstOrDefaultAsync(x => string.Equals(x.Name, client.Name));
             if (matchingClient == null)
             {
                 var createRequest = Reflectorisor.CopyMembers<Client, ClientCreateRequest>(client);

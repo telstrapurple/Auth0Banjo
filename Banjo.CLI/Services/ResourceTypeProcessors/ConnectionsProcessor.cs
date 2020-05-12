@@ -21,7 +21,6 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
         private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _args;
         private readonly ManagementApiClientFactory _managementApiClientFactory;
         private readonly IConverter<Auth0ResourceTemplate, Connection> _converter;
-        private readonly IReporter _reporter;
 
         public ConnectionsProcessor(
             IOptionsMonitor<Auth0ProcessArgsConfig> args,
@@ -33,7 +32,6 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             _args = args;
             _managementApiClientFactory = managementApiClientFactory;
             _converter = converter;
-            _reporter = reporter;
         }
 
         //internal class to more easily pull out the enabled_clients_match_conditions than working with the JToken api directly.
@@ -88,7 +86,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             
             if (_args.CurrentValue.DryRun)
             {
-                _reporter.Warn(
+                Reporter.Warn(
                     "Dry-run flag is set. Any clients that do not exist but that will be created by " +
                     "these templates when run without the dry-run flag may not be found and included in this " +
                     "connections\' enabled_clients list. The complete list of matching clients will be found when " +
@@ -104,15 +102,14 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
             var templatedConnection = _converter.Convert(template);
 
-            // //todo support proper pagination - how to do this where every api call is different?!
             var getConnectionsRequest = new GetConnectionsRequest
             {
                 IncludeFields = true,
                 Fields = "name,id"
             };
-            var allConnections = await managementClient.Connections.GetAllAsync(getConnectionsRequest, new PaginationInfo());
+            var allConnections = managementClient.Connections.GetAllAsync(getConnectionsRequest, Reporter);
 
-            var matchingConnection = allConnections.FirstOrDefault(x => string.Equals(x.Name, templatedConnection.Name));
+            var matchingConnection = await allConnections.FirstOrDefaultAsync(x => string.Equals(x.Name, templatedConnection.Name));
             if (matchingConnection == null)
             {
                 var createRequest = Reflectorisor.CopyMembers<Connection, ConnectionCreateRequest>(templatedConnection);

@@ -51,8 +51,8 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
             templatedGrant.ClientId = matchingClient.ClientId;
 
-            var allGrants = await managementClient.ClientGrants.GetAllAsync(new GetClientGrantsRequest(), new PaginationInfo());
-            var existingGrant = allGrants.FirstOrDefault(
+            var allGrants = managementClient.ClientGrants.GetAllAsync(new GetClientGrantsRequest(), Reporter);
+            var existingGrant = await allGrants.FirstOrDefaultAsync(
                 x => string.Equals(x.ClientId, templatedGrant.ClientId)
                      && string.Equals(x.Audience, templatedGrant.Audience));
 

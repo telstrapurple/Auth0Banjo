@@ -32,11 +32,9 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
             var role = _converter.Convert(template);
 
-            //todo support proper pagination - how to do this where every api call is different?!
-            var results = await managementClient.Roles.GetAllAsync(new GetRolesRequest(), new PaginationInfo());
+            var results = managementClient.Roles.GetAllAsync(new GetRolesRequest(), Reporter);
 
-
-            var matchingRole = results.FirstOrDefault(x => string.Equals(x.Name, role.Name));
+            var matchingRole = await results.FirstOrDefaultAsync(x => string.Equals(x.Name, role.Name));
             if (matchingRole == null)
             {
                 var createRequest = Reflectorisor.CopyMembers<Role, RoleCreateRequest>(role);

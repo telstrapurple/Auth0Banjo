@@ -15,6 +15,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
         private readonly ManagementApiClientFactory _managementApiClientFactory;
         private readonly IConverter<Auth0ResourceTemplate, ResourceServer> _converter;
+        private readonly IReporter _reporter;
 
         public ResourceServersProcessor(
             IOptionsMonitor<Auth0ProcessArgsConfig> args,
@@ -25,6 +26,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
         {
             _managementApiClientFactory = managementApiClientFactory;
             _converter = converter;
+            _reporter = reporter;
         }
 
         public override async Task ProcessAsync(Auth0ResourceTemplate template)
@@ -33,12 +35,11 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
             var templatedResourceServer = _converter.Convert(template);
 
-            // //todo support proper pagination - how to do this where every api call is different?!
-            var results = await managementClient.ResourceServers.GetAllAsync(new PaginationInfo());
+            var results = managementClient.ResourceServers.GetAllAsync(_reporter);
 
             FixIllegalOptions(templatedResourceServer);
 
-            var matchingResourceServer = results.FirstOrDefault(x => string.Equals(x.Name, templatedResourceServer.Name));
+            var matchingResourceServer = await results.FirstOrDefaultAsync(x => string.Equals(x.Name, templatedResourceServer.Name));
             if (matchingResourceServer == null)
             {
                 var createRequest = Reflectorisor.CopyMembers<ResourceServer, ResourceServerCreateRequest>(templatedResourceServer);
