@@ -8,7 +8,7 @@
     <ToolCommandName>banjo</ToolCommandName>
     <PackageOutputPath>./</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <UserSecretsId>012ccac7-c4d7-4f76-a0a1-4f8327fcf0b4</UserSecretsId>
+    <UserSecretsId>Banjo.CLI</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

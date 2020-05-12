@@ -8,6 +8,7 @@ using Banjo.CLI.Services;
 using Banjo.CLI.Services.PipelineStages;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Banjo.CLI.Commands
 {
@@ -93,6 +94,11 @@ namespace Banjo.CLI.Commands
                 reporter.Warn("Recommend also setting -out|--output {output-path} to have Banjo " +
                               "write the effective templates.");
             }
+            
+            var auth0Args = app.GetRequiredService<IOptionsMonitor<Auth0AuthenticationConfig>>().CurrentValue;
+            reporter.Output($"Current Auth0 domain: {auth0Args.Domain.ToSafeForOutput()}");
+            reporter.Verbose($"Connecting with client ID: {auth0Args.ClientId.ToSafeForOutput()}");
+            reporter.Verbose($"Connecting with client secret: {auth0Args.ClientSecret.ToSafeForOutput(true)}");
 
             var pipelineStages = new List<IPipelineStage<Auth0ResourceTemplate>>
             {
@@ -112,6 +118,19 @@ namespace Banjo.CLI.Commands
                 .ToList();
 
             await pipeline.ExecuteAsync(templatesToProcess);
+        }
+    }
+
+    internal static class SecretStringExtensions
+    {
+        internal static string ToSafeForOutput(this string input, bool maskValue = false)
+        {
+            return input switch
+            {
+                null => "<null>",
+                { } s when s.Length == 0 => "<empty>",
+                _ => maskValue ? "****" : input
+            };
         }
     }
 }
