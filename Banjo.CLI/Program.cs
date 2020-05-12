@@ -1,7 +1,4 @@
-using System;
-using System.Diagnostics.Tracing;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -9,7 +6,6 @@ using Banjo.CLI.Commands;
 using Banjo.CLI.Configuration;
 using Banjo.CLI.Services;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
