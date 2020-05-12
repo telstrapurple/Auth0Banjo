@@ -108,6 +108,7 @@ namespace Banjo.CLI.Commands
                 pipelineStageFactory.CreateResourcePreprocessingStage(),
                 pipelineStageFactory.CreateOutputProcessor(),
                 pipelineStageFactory.CreateVerifier(),
+                pipelineStageFactory.CreateUnresolvedTokenVerifier(),
                 pipelineStageFactory.CreateApiExecutor()
             };
 
