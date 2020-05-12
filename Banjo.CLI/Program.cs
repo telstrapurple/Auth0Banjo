@@ -29,8 +29,6 @@ namespace Banjo.CLI
 
         public static async Task<int> Main(string[] args)
         {
-            // using var httpEventListener = new EventSourceListener("Microsoft-System-Net-Http");
-            
             return await Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureLogging((context, builder) => { builder.SetMinimumLevel(LogLevel.Information).AddConsole(); })
@@ -53,47 +51,6 @@ namespace Banjo.CLI
             // this shows help even if the --help option isn't specified
             app.ShowHelp();
             return Task.FromResult(0);
-        }
-    }
-    
-    sealed class EventSourceListener : EventListener
-    {
-        private readonly string _eventSourceName;
-        private readonly StringBuilder _messageBuilder = new StringBuilder();
-
-        public EventSourceListener(string name)
-        {
-            _eventSourceName = name;
-        }
-
-        protected override void OnEventSourceCreated(EventSource eventSource)
-        {
-            base.OnEventSourceCreated(eventSource);
-
-            if (eventSource.Name == _eventSourceName)
-            {
-                EnableEvents(eventSource, EventLevel.LogAlways, EventKeywords.All);
-            }
-        }
-
-        protected override void OnEventWritten(EventWrittenEventArgs eventData)
-        {
-            base.OnEventWritten(eventData);
-
-            string message;
-            lock (_messageBuilder)
-            {
-                _messageBuilder.Append("<- Event ");
-                _messageBuilder.Append(eventData.EventSource.Name);
-                _messageBuilder.Append(" - ");
-                _messageBuilder.Append(eventData.EventName);
-                _messageBuilder.Append(" : ");
-                _messageBuilder.AppendJoin(',', eventData.Payload);
-                _messageBuilder.AppendLine(" ->");
-                message = _messageBuilder.ToString();
-                _messageBuilder.Clear();
-            }
-            Console.WriteLine(message);
         }
     }
 }
