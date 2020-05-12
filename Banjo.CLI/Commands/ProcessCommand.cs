@@ -105,7 +105,7 @@ namespace Banjo.CLI.Commands
                 pipelineStageFactory.CreateApiExecutor()
             };
 
-            var pipeline = new PipelineExecutor(pipelineStages);
+            var pipeline = new PipelineExecutor(pipelineStages, reporter);
 
             var templatesToProcess = ResourceType.SupportedResourceTypes
                 .SelectMany(x => templateSource.GetTemplates(TemplatesPath, x))

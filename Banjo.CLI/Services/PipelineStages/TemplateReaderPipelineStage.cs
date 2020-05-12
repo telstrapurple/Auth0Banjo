@@ -8,6 +8,8 @@ namespace Banjo.CLI.Services.PipelineStages
 {
     public class TemplateReaderPipelineStage : IPipelineStage<Auth0ResourceTemplate>
     {
+        public string Name { get; } = "Read Template";
+
         public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
         {
             var templateFileContents = await File.ReadAllTextAsync(t.Location.FullName);

@@ -7,6 +7,8 @@ namespace Banjo.CLI.Services.PipelineStages
 {
     public class StringReplacementStage : IPipelineStage<Auth0ResourceTemplate>
     {
+        public string Name { get; } = "Replace Tokens";
+
         public StringReplacementStage()
         {
         }

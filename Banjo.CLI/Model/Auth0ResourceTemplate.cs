@@ -14,5 +14,6 @@ namespace Banjo.CLI.Model
         public bool ReplacementsApplied { get; set; } = false;
         public bool Preprocessed { get; set; } = false;
         public bool ApiCallsProcessed { get; set; } = false;
+        public bool ContinueProcessing { get; set; } = true;
     }
 }

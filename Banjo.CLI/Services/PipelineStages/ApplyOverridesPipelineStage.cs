@@ -8,6 +8,8 @@ namespace Banjo.CLI.Services.PipelineStages
 {
     public class ApplyOverridesPipelineStage : IPipelineStage<Auth0ResourceTemplate>
     {
+        public string Name { get; } = "Apply Overrides";
+
         private readonly Overrides _overrides;
 
         public ApplyOverridesPipelineStage(Overrides overrides)

@@ -9,6 +9,8 @@ namespace Banjo.CLI.Services.PipelineStages
 {
     public class TemplateValidatorStage : IPipelineStage<Auth0ResourceTemplate>
     {
+        public string Name { get; } = "Validate Template";
+
         private readonly ResourceTypeProcessorFactory _processorFactory;
         private readonly IReporter _reporter;
 

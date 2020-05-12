@@ -10,6 +10,8 @@ namespace Banjo.CLI.Services.PipelineStages
 {
     public class WriteOutputPipelineStage : IPipelineStage<Auth0ResourceTemplate>
     {
+        public string Name { get; } = "Write Output";
+
         private readonly IReporter _reporter;
         private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _args;
 

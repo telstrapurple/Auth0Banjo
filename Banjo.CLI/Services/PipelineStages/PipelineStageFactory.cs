@@ -67,6 +67,8 @@ namespace Banjo.CLI.Services.PipelineStages
 
     public class ResourcePreProcessorStage : IPipelineStage<Auth0ResourceTemplate>
     {
+        public string Name { get; } = "Preprocess Template";
+
         private readonly ResourceTypeProcessorFactory _processorFactory;
         private readonly IReporter _reporter;
 
