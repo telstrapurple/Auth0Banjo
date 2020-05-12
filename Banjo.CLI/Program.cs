@@ -15,7 +15,7 @@ namespace Banjo.CLI
     [Command(Name = "banjo")]
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
     [Subcommand(
-        typeof(ProcessCommand), typeof(HelloWorldCommand)
+        typeof(ProcessCommand)
     )]
     public class Program : BanjoCommandBase
     {

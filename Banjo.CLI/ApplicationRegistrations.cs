@@ -33,7 +33,6 @@ namespace Banjo.CLI
             container.RegisterType<LoggerFactory>().As<ILoggerFactory>().SingleInstance();
             container.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>)).SingleInstance();
 
-            container.RegisterType<BanjoGreeter>().AsImplementedInterfaces();
             container.RegisterType<DefaultTemplateSource>().AsImplementedInterfaces();
             container.RegisterType<FileOverrideSource>().AsImplementedInterfaces();
             container.RegisterDecorator<TransformingOverridesSource, IOverridesSource>();

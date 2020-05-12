@@ -30,7 +30,19 @@ namespace Banjo.CLI.Services
                 {
                     continue;
                 }
-                replacement.Value = Environment.GetEnvironmentVariable(envVar);
+
+                var value = Environment.GetEnvironmentVariable(envVar);
+                if (string.IsNullOrEmpty(value))
+                {
+                    _reporter.Warn(
+                        $"Overrides file requested environment variable {envVar} but the value was not set " +
+                        "or is null or empty.");
+                    _reporter.Warn("You should check the effective templates carefully for any unresolved " +
+                                   "tokens.");
+                    _reporter.Warn("Use argument -out|--output {output-path} to write the effective templates.");
+                }
+
+                replacement.Value = value;
             }
         }
     }
