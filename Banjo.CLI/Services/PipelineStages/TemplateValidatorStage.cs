@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Banjo.CLI.Model;
 using Banjo.CLI.Services.ResourceTypeProcessors;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
 namespace Banjo.CLI.Services.PipelineStages
@@ -9,14 +10,14 @@ namespace Banjo.CLI.Services.PipelineStages
     public class TemplateValidatorStage : IPipelineStage<Auth0ResourceTemplate>
     {
         private readonly ResourceTypeProcessorFactory _processorFactory;
-        private readonly ILogger<TemplateValidatorStage> _logger;
+        private readonly IReporter _reporter;
 
         public TemplateValidatorStage(
             ResourceTypeProcessorFactory processorFactory, 
-            ILogger<TemplateValidatorStage> logger)
+            IReporter reporter)
         {
             _processorFactory = processorFactory;
-            _logger = logger;
+            _reporter = reporter;
         }
 
         public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
@@ -29,8 +30,8 @@ namespace Banjo.CLI.Services.PipelineStages
             }
             catch (Exception e)
             {
-                _logger.LogError($"Result of processing {t.Type.Name} template {t.Location.FullName} was not valid.");
-                _logger.LogError(e.Message);
+                _reporter.Error($"Result of processing {t.Type.Name} template {t.Location.FullName} was not valid.");
+                _reporter.Error(e.Message);
             }
 
             return t;

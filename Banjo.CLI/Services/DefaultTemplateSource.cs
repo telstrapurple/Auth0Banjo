@@ -35,7 +35,7 @@ namespace Banjo.CLI.Services
             _reporter.Output($"Found {foundTemplates.Count} {templateType.Name} templates.");
             foreach (var t in foundTemplates)
             {
-                _reporter.Output($"\t{t.Location.FullName}");
+                _reporter.Verbose($"\t{t.Location.FullName}");
             }
 
             return foundTemplates;

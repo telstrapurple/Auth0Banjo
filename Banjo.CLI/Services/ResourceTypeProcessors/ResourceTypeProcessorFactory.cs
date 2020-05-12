@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Banjo.CLI.Model;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
 namespace Banjo.CLI.Services.ResourceTypeProcessors
@@ -7,12 +8,11 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
     public class ResourceTypeProcessorFactory
     {
         private readonly Dictionary<string, IResourceTypeProcessor> _processorMap;
-        private readonly ILogger<ResourceTypeProcessorFactory> _logger;
 
-        public ResourceTypeProcessorFactory(IEnumerable<IResourceTypeProcessor> availableProcessors, ILogger<ResourceTypeProcessorFactory> logger)
+        public ResourceTypeProcessorFactory(
+            IEnumerable<IResourceTypeProcessor> availableProcessors, 
+            IReporter reporter)
         {
-            _logger = logger;
-
             _processorMap = new Dictionary<string, IResourceTypeProcessor>();
             foreach (var processor in availableProcessors)
             {
@@ -24,7 +24,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
                     }
                     else
                     {
-                        _logger.LogWarning($"Multiple processors claim to handle resource type {resourceType.Name}. Ignoring processor registration {processor.GetType().Name}.");
+                        reporter.Warn($"Multiple processors claim to handle resource type {resourceType.Name}. Ignoring processor registration {processor.GetType().Name}.");
                     }
                 }
             }

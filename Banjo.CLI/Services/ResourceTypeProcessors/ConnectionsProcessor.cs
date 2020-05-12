@@ -85,7 +85,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             if (_args.CurrentValue.DryRun)
             {
                 _reporter.Warn(
-                    "The dry-run flag is set. Any clients that do not exist but that will be created by " +
+                    "Dry-run flag is set. Any clients that do not exist but that will be created by " +
                     "these templates when run without the dry-run flag may not be found and included in this " +
                     "connections\' enabled_clients list. The complete list of matching clients will be found when " +
                     "run without the dry-run flag.");

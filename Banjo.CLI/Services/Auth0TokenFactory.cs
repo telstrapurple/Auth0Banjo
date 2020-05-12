@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AsyncLazy;
 using Banjo.CLI.Configuration;
 using IdentityModel.Client;
-using Microsoft.Extensions.Logging;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Options;
 
 namespace Banjo.CLI.Services
@@ -14,13 +14,14 @@ namespace Banjo.CLI.Services
         private readonly AsyncLazy<string> _token;
         private readonly HttpClient _httpClient;
         private readonly IOptionsMonitor<Auth0AuthenticationConfig> _config;
-        private readonly ILogger<Auth0TokenFactory> _logger;
+        private readonly IReporter _reporter;
 
-        public Auth0TokenFactory(HttpClient httpClient, IOptionsMonitor<Auth0AuthenticationConfig> config, ILogger<Auth0TokenFactory> logger)
+        public Auth0TokenFactory(HttpClient httpClient, IOptionsMonitor<Auth0AuthenticationConfig> config, IReporter reporter)
         {
             _httpClient = httpClient;
             _config = config;
-            _logger = logger;
+            _reporter = reporter;
+
 
             _token = new AsyncLazy<string>(async () =>
             {
@@ -28,7 +29,8 @@ namespace Banjo.CLI.Services
 
                 if (disco.IsError)
                 {
-                    _logger.LogError(disco.Exception, disco.Error);
+                    _reporter.Error(disco.Error);
+                    _reporter.Error(disco.Exception.Message);
                     throw disco.Exception;
                 }
 
@@ -42,7 +44,8 @@ namespace Banjo.CLI.Services
 
                 if (token.IsError)
                 {
-                    _logger.LogError(token.Exception, token.ErrorDescription);
+                    _reporter.Error(token.ErrorDescription);
+                    _reporter.Error(token.Exception.Message);
                     throw token.Exception;
                 }
 

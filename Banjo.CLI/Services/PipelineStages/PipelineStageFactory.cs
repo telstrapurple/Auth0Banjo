@@ -13,20 +13,17 @@ namespace Banjo.CLI.Services.PipelineStages
     {
         private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _argOptions;
         private readonly IOverridesSource _overridesSource;
-        private readonly ILoggerFactory _loggerFactory;
         private readonly ResourceTypeProcessorFactory _resourceTypeProcessorFactory;
         private readonly IReporter _reporter;
 
         public PipelineStageFactory(
             IOptionsMonitor<Auth0ProcessArgsConfig> argOptions,
             IOverridesSource overridesSource,
-            ILoggerFactory loggerFactory,
             ResourceTypeProcessorFactory resourceTypeProcessorFactory, 
             IReporter reporter)
         {
             _argOptions = argOptions;
             _overridesSource = overridesSource;
-            _loggerFactory = loggerFactory;
             _resourceTypeProcessorFactory = resourceTypeProcessorFactory;
             _reporter = reporter;
         }
@@ -54,7 +51,7 @@ namespace Banjo.CLI.Services.PipelineStages
         
         public IPipelineStage<Auth0ResourceTemplate> CreateVerifier()
         {
-            return new TemplateValidatorStage(_resourceTypeProcessorFactory, _loggerFactory.CreateLogger<TemplateValidatorStage>());
+            return new TemplateValidatorStage(_resourceTypeProcessorFactory, _reporter);
         }
         
         public IPipelineStage<Auth0ResourceTemplate> CreateTokenReplacementStage()

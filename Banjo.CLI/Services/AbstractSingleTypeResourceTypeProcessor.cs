@@ -44,7 +44,7 @@ namespace Banjo.CLI.Services
 
             if (_args.CurrentValue.DryRun)
             {
-                _reporter.Output($"DryRun flag is set. Not making the API call to Auth0 to update {Type.Name} \"{name}\"");
+                _reporter.Warn($"DryRun flag is set. Not making the API call to Auth0 to update {Type.Name} \"{name}\"");
             }
             else
             {
@@ -59,7 +59,7 @@ namespace Banjo.CLI.Services
 
             if (_args.CurrentValue.DryRun)
             {
-                _reporter.Output($"DryRun flag is set. Not making the API call to Auth0 to create {Type.Name} \"{name}\"");
+                _reporter.Warn($"DryRun flag is set. Not making the API call to Auth0 to create {Type.Name} \"{name}\"");
             }
             else
             {
