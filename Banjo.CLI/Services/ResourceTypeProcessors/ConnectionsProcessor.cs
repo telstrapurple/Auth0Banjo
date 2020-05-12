@@ -61,7 +61,11 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
 
             using var managementClient = await _managementApiClientFactory.CreateAsync();
 
-            var clients = await managementClient.Clients.GetAllAsync(new GetClientsRequest() { IsGlobal = false }, new PaginationInfo());
+            var getClientsRequest = new GetClientsRequest()
+            {
+                IsGlobal = false, IncludeFields = true, Fields = "name,client_id"
+            };
+            var clients = await managementClient.Clients.GetAllAsync(getClientsRequest, new PaginationInfo());
 
             var matchConditionsRegexes = matchConditions.Select(x => new Regex(x));
             var matchingClientIds = clients.Where(x =>
@@ -101,7 +105,12 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             var templatedConnection = _converter.Convert(template);
 
             // //todo support proper pagination - how to do this where every api call is different?!
-            var allConnections = await managementClient.Connections.GetAllAsync(new GetConnectionsRequest(), new PaginationInfo());
+            var getConnectionsRequest = new GetConnectionsRequest
+            {
+                IncludeFields = true,
+                Fields = "name,id"
+            };
+            var allConnections = await managementClient.Connections.GetAllAsync(getConnectionsRequest, new PaginationInfo());
 
             var matchingConnection = allConnections.FirstOrDefault(x => string.Equals(x.Name, templatedConnection.Name));
             if (matchingConnection == null)

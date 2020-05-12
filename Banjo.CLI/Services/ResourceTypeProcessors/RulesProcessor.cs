@@ -64,7 +64,11 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             var rule = _converter.Convert(template);
 
             //todo support proper pagination - how to do this where every api call is different?!
-            var results = await managementClient.Rules.GetAllAsync(new GetRulesRequest(), new PaginationInfo());
+            var getRulesRequest = new GetRulesRequest
+            {
+                IncludeFields = true, Fields = "name,id"
+            };
+            var results = await managementClient.Rules.GetAllAsync(getRulesRequest, new PaginationInfo());
 
             var matchingRule = results.FirstOrDefault(x => string.Equals(x.Name, rule.Name));
             if (matchingRule == null)

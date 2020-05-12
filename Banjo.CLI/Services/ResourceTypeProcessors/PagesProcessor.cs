@@ -93,7 +93,12 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
         {
             using var managementClient = await _managementApiClientFactory.CreateAsync();
 
-            var globalClients = await managementClient.Clients.GetAllAsync(new GetClientsRequest() { IsGlobal = true }, new PaginationInfo());
+            var getClientsRequest = new GetClientsRequest
+            {
+                IsGlobal = true, Fields = "client_id,name", IncludeFields = true
+                
+            };
+            var globalClients = await managementClient.Clients.GetAllAsync(getClientsRequest, new PaginationInfo());
             var globalClient = globalClients.FirstOrDefault();
             if (globalClient == null)
             {

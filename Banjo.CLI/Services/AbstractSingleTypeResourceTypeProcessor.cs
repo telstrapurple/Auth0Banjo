@@ -44,12 +44,12 @@ namespace Banjo.CLI.Services
 
             if (_args.CurrentValue.DryRun)
             {
-                _reporter.Warn($"DryRun flag is set. Not making the API call to Auth0 to update {Type.Name} \"{name}\"");
+                _reporter.Warn($"DryRun flag is set. Not making the API call to Auth0 to update {Type.Name} {id} {name}");
             }
             else
             {
                 await updater.Invoke();
-                _reporter.Output($"Finished updating existing {Type.Name}: {id} \"{name}\"");
+                _reporter.Output($"Finished updating existing {Type.Name}: {id} {name}");
             }
         }
 
@@ -59,12 +59,12 @@ namespace Banjo.CLI.Services
 
             if (_args.CurrentValue.DryRun)
             {
-                _reporter.Warn($"DryRun flag is set. Not making the API call to Auth0 to create {Type.Name} \"{name}\"");
+                _reporter.Warn($"DryRun flag is set. Not making the API call to Auth0 to create {Type.Name} {name}");
             }
             else
             {
                 var output = await creator.Invoke();
-                StringBuilder sb = new StringBuilder($"Finished creating new {Type.Name}: \"{name}\".");
+                StringBuilder sb = new StringBuilder($"Finished creating new {Type.Name}: {name}.");
                 if (id != null)
                 {
                     sb.Append($" New id is {id.Invoke(output)}.");

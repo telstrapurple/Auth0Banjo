@@ -35,7 +35,12 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             using var managementClient = await _managementApiClientFactory.CreateAsync();
             var templatedGrant = _converter.Convert(template);
 
-            var allClients = await managementClient.Clients.GetAllAsync(new GetClientsRequest(), new PaginationInfo());
+            var getClientsRequest = new GetClientsRequest
+            {
+                IsGlobal = false, IncludeFields = true, Fields = "name,client_id"
+                
+            };
+            var allClients = await managementClient.Clients.GetAllAsync(getClientsRequest, new PaginationInfo());
             var matchingClient = allClients.FirstOrDefault(x => x.Name == templatedGrant.ClientId);
             if (matchingClient == null)
             {
