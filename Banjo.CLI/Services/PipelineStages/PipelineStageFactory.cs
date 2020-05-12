@@ -33,9 +33,9 @@ namespace Banjo.CLI.Services.PipelineStages
             return new TemplateReaderPipelineStage();
         }
 
-        public IPipelineStage<Auth0ResourceTemplate> CreateOverridesProcessor()
+        public async Task<IPipelineStage<Auth0ResourceTemplate>> CreateOverridesProcessor()
         {
-            var overrides = _overridesSource.GetOverrides(_argOptions.CurrentValue.OverrideFilePath);
+            var overrides = await _overridesSource.GetOverridesAsync(_argOptions.CurrentValue.OverrideFilePath);
             return new ApplyOverridesPipelineStage(overrides);
         }
 

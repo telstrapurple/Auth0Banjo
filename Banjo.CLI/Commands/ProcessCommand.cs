@@ -97,7 +97,7 @@ namespace Banjo.CLI.Commands
             var pipelineStages = new List<IPipelineStage<Auth0ResourceTemplate>>
             {
                 pipelineStageFactory.CreateTemplateReader(),
-                pipelineStageFactory.CreateOverridesProcessor(),
+                await pipelineStageFactory.CreateOverridesProcessor(),
                 pipelineStageFactory.CreateTokenReplacementStage(),
                 pipelineStageFactory.CreateResourcePreprocessingStage(),
                 pipelineStageFactory.CreateOutputProcessor(),

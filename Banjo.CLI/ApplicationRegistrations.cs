@@ -35,7 +35,13 @@ namespace Banjo.CLI
 
             container.RegisterType<BanjoGreeter>().AsImplementedInterfaces();
             container.RegisterType<DefaultTemplateSource>().AsImplementedInterfaces();
-            container.RegisterType<OverridesSource>().AsImplementedInterfaces();
+            container.RegisterType<FileOverrideSource>().AsImplementedInterfaces();
+            container.RegisterDecorator<TransformingOverridesSource, IOverridesSource>();
+            
+            container.RegisterType<ReplacementTokensFromEnvironmentVariablesTransformer>()
+                .AsImplementedInterfaces();
+            container.RegisterType<MultiCasedReplacementTransformer>()
+                .AsImplementedInterfaces();
 
             container.RegisterType<Auth0TokenFactory>().AsImplementedInterfaces().SingleInstance();
 

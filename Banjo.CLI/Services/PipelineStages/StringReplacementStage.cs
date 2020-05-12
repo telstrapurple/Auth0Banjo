@@ -15,7 +15,8 @@ namespace Banjo.CLI.Services.PipelineStages
 
         public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
         {
-            if ((t.Overrides?.Replacements?.Count ?? 0) == 0)
+            var overridesVerbatimReplacements = t.Overrides?.VerbatimReplacements;
+            if ((overridesVerbatimReplacements?.Count ?? 0) == 0)
             {
                 //no overrides or no replacements defined in it, so bail out.
                 t.ReplacementsApplied = true;
@@ -28,7 +29,7 @@ namespace Banjo.CLI.Services.PipelineStages
             {
                 if (!(token.Value is string v) || string.IsNullOrWhiteSpace(v)) continue;
                 
-                foreach (var (key, value) in t.Overrides.Replacements)
+                foreach (var (key, value) in overridesVerbatimReplacements)
                 {
                     token.Value = (token.Value as string)?.Replace(key, value);
                 }
