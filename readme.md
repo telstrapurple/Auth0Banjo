@@ -168,7 +168,11 @@ This is an example of an overrides file that shows the two ways you can define s
         }
       ]
     }
-  ]
+  ],
+   "resource-servers": [],
+   "pages": [],
+   "connections": [],
+   //...and any other supported resource type
 }
 ```
 
