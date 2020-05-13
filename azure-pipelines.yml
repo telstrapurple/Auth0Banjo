@@ -62,6 +62,11 @@ stages:
             inputs:
               path: '$(Build.ArtifactStagingDirectory)/Banjo.CLI'
               artifact: Banjo.CLI
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish CLI Artifact'
+            inputs:
+              path: 'Banjo.CLI/Banjo.CLI.$(GitVersion.NuGetVersion).nupkg'
+              artifact: CLI
       - job: CLI
         pool:
            vmImage: 'windows-latest'
@@ -71,8 +76,8 @@ stages:
            - task: DownloadPipelineArtifact@2
              displayName: 'Download CLI Artifact'
              inputs:
-               artifactName: 'Banjo.CLI'
-               targetPath: '$(Pipeline.Workspace)/Banjo.CLI'
+               artifactName: CLI
+               targetPath: '$(Pipeline.Workspace)/CLI'
            - task: NuGetAuthenticate@0
              displayName: 'NuGet Authenticate'
            - task: NuGetCommand@2
