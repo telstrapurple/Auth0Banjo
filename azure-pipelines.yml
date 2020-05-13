@@ -44,12 +44,12 @@ stages:
             inputs:
               preferBundledVersion: false
           - task: DotNetCoreCLI@2
-            displayName: Build
+            displayName: dotnet build
             inputs:
               projects: '$(BuildProjects)'
               arguments: '--configuration $(BuildConfiguration) -p:VersionPrefix=$(GitVersion.NuGetVersion)'
           - task: DotNetCoreCLI@2
-            displayName: 'Publish Banjo.CLI'
+            displayName: 'dotnet publish Banjo.CLI'
             inputs:
               command: publish
               publishWebProjects: false
@@ -62,29 +62,13 @@ stages:
             inputs:
               path: '$(Build.ArtifactStagingDirectory)/Banjo.CLI'
               artifact: Banjo.CLI
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish CLI Artifact'
+          - task: NuGetAuthenticate@0
+            displayName: 'NuGet Authenticate'
+          - task: NuGetCommand@2
+            displayName: 'Nuget Publish Banjo.CLI'
             inputs:
-              path: 'Banjo.CLI/Banjo.CLI.$(GitVersion.NuGetVersion).nupkg'
-              artifact: CLI
-      - job: CLI
-        pool:
-           vmImage: 'windows-latest'
-        dependsOn: Version
-        steps:
-           - checkout: none
-           - task: DownloadPipelineArtifact@2
-             displayName: 'Download CLI Artifact'
-             inputs:
-               artifactName: CLI
-               targetPath: '$(Pipeline.Workspace)/CLI'
-           - task: NuGetAuthenticate@0
-             displayName: 'NuGet Authenticate'
-           - task: NuGetCommand@2
-             displayName: 'Nuget Publish Banjo.CLI'
-             inputs:
-               command: push
-               packagesToPush: '$(Pipeline.Workspace)/Banjo.CLI/Banjo.CLI.*.nupkg'
-               publishVstsFeed: 'Labs/Banjo'
-               allowPackageConflicts: true
-               verbosityPush: Normal
+              command: push
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/Banjo.CLI/Banjo.CLI.*.nupkg'
+              publishVstsFeed: 'Labs/Banjo'
+              allowPackageConflicts: true
+              verbosityPush: Normal
