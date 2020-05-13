@@ -62,13 +62,29 @@ stages:
             inputs:
               path: '$(Build.ArtifactStagingDirectory)/Banjo.CLI'
               artifact: Banjo.CLI
-          - task: NuGetAuthenticate@0
-            displayName: 'NuGet Authenticate'
-          - task: NuGetCommand@2
-            displayName: 'Nuget Publish Banjo.CLI'
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish CLI Artifact'
             inputs:
-              command: push
-              packagesToPush: '$(Build.ArtifactStagingDirectory)/Banjo.CLI/Banjo.CLI.*.nupkg'
-              publishVstsFeed: 'Labs/Banjo'
-              allowPackageConflicts: true
-              verbosityPush: Normal
+              path: 'Banjo.CLI/Banjo.CLI.$(GitVersion.NuGetVersion).nupkg'
+              artifact: CLI
+      - job: CLI
+        pool:
+           vmImage: 'windows-latest'
+        dependsOn: Version
+        steps:
+           - checkout: none
+           - task: DownloadPipelineArtifact@2
+             displayName: 'Download CLI Artifact'
+             inputs:
+               artifactName: CLI
+               targetPath: '$(Pipeline.Workspace)/CLI'
+           - task: NuGetAuthenticate@0
+             displayName: 'NuGet Authenticate'
+           - task: NuGetCommand@2
+             displayName: 'Nuget Publish Banjo.CLI'
+             inputs:
+               command: push
+               packagesToPush: '$(Pipeline.Workspace)/CLI/Banjo.CLI.*.nupkg'
+               publishVstsFeed: 'Labs/Banjo'
+               allowPackageConflicts: true
+               verbosityPush: Normal
