@@ -1,0 +1,85 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+
+variables:
+  BuildProjects: '**/*.csproj' # Projects to Restore & Build
+  BuildConfiguration: release
+
+stages:
+  - stage: Build
+    displayName: 'Build & Test'
+    variables:
+      TestProjects: '**/*Tests/*.csproj'  # Projects to Test
+    jobs:
+      - job: 'Build_And_Test'
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              projects: '$(BuildProjects)'
+              arguments: '--configuration $(BuildConfiguration)'
+          - task: DotNetCoreCLI@2
+            displayName: Test
+            inputs:
+              command: test
+              projects: '$(TestProjects)'
+              arguments: '--configuration $(BuildConfiguration)'
+
+  - stage: Stage
+    displayName: 'Publish CLI'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) # Only run for master, after Build has succeeded
+    jobs:
+      - job: Version
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - task: gittools.gitversion.gitversion-task.GitVersion@4 # Automatically creates a GitVersion.NuGetVersion variable.
+            displayName: GitVersion
+            inputs:
+              preferBundledVersion: false
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              projects: '$(BuildProjects)'
+              arguments: '--configuration $(BuildConfiguration) -p:VersionPrefix=$(GitVersion.NuGetVersion)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish Banjo.CLI'
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: 'Banjo.CLI/Banjo.CLI.csproj'
+              arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/Banjo.CLI'
+              zipAfterPublish: false
+              modifyOutputPath: false
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Banjo.CLI Pipeline Artifact'
+            inputs:
+              path: '$(Build.ArtifactStagingDirectory)/Banjo.CLI'
+              artifact: Banjo.CLI
+      - job: CLI
+        pool:
+           vmImage: 'windows-latest'
+        dependsOn: Version
+        steps:
+           - checkout: none
+           - task: DownloadPipelineArtifact@2
+             displayName: 'Download CLI Artifact'
+             inputs:
+               artifactName: 'Banjo.CLI'
+               targetPath: '$(Pipeline.Workspace)/Banjo.CLI'
+           - task: NuGetAuthenticate@0
+             displayName: 'NuGet Authenticate'
+           - task: NuGetCommand@2
+             displayName: 'Nuget Publish Banjo.CLI'
+             inputs:
+               command: push
+               packagesToPush: '$(Pipeline.Workspace)/Banjo.CLI/Banjo.CLI.*.nupkg'
+               publishVstsFeed: 'Labs/Banjo'
+               allowPackageConflicts: true
+               verbosityPush: Normal

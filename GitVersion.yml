@@ -1,0 +1,26 @@
+# CI is only triggered on a PR / PR update / merge to master. Based on that, we only need two definitions.
+# 
+# master is configured as Continuous Delivery because that's the default and suitable for what we need. Each merge will increment the Patch version.
+#   When we're ready to "release", we manually tag the target commit with the version we're releasing, manually trigger a build and GitVersion will figure out the rest.
+# PRs are configured as Continuous Deployment so that updates to PRs get a unique version and don't conflict with existing NuGet packages.
+
+branches:
+  master: 
+    regex: ^master
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: true
+  pull-request:
+    regex: ^(pull|pull\-requests|pr)[/-]
+    mode: ContinuousDeployment
+    tag: PullRequest-
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: false
+    tag-number-pattern: '[/-](?<number>\d+)[-/]'
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
