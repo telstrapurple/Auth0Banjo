@@ -5,6 +5,6 @@ namespace Banjo.CLI.Services
 {
     public interface IOverridesSource
     {
-        Task<Overrides> GetOverridesAsync(string overridesFileLocation);
+        Task<Overrides> GetOverridesAsync();
     }
 }

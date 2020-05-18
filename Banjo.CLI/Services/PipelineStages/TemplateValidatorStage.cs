@@ -11,11 +11,11 @@ namespace Banjo.CLI.Services.PipelineStages
     {
         public string Name { get; } = "Validate Template";
 
-        private readonly ResourceTypeProcessorFactory _processorFactory;
+        private readonly IResourceTypeProcessorFactory _processorFactory;
         private readonly IReporter _reporter;
 
         public TemplateValidatorStage(
-            ResourceTypeProcessorFactory processorFactory, 
+            IResourceTypeProcessorFactory processorFactory, 
             IReporter reporter)
         {
             _processorFactory = processorFactory;

@@ -17,17 +17,12 @@ namespace Banjo.CLI.Services
 
         private readonly IManagementConnection _wrapped;
 
-        public RateLimitAwareManagementConnection(IManagementConnection wrapped, IReporter reporter)
+        public RateLimitAwareManagementConnection(IManagementConnection wrapped, IReporter reporter, double retrySeconds = 1)
         {
             _wrapped = wrapped;
             _retryPolicy = Policy<object>
                 .Handle<RateLimitApiException>()
-                .WaitAndRetryAsync(new[]
-                    {
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromSeconds(2),
-                        TimeSpan.FromSeconds(3)
-                    },
+                .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(retrySeconds),
                     (result, span, context) => { reporter.Verbose("Rate limit exceeded, waiting before retrying."); });
         }
 

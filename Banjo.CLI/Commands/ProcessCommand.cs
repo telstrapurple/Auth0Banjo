@@ -59,7 +59,7 @@ namespace Banjo.CLI.Commands
 
         public override async Task OnExecuteAsync(CommandLineApplication app)
         {
-            ArgumentConfigurator configurator = app.GetRequiredService<ArgumentConfigurator>();
+            var configurator = app.GetRequiredService<IArgumentConfigurator>();
             configurator.AddConfiguration(new Auth0ProcessArgsConfig
             {
                 DryRun = DryRun,
@@ -75,8 +75,8 @@ namespace Banjo.CLI.Commands
             //
             //Generally, Banjo-specific classes can avoid working with stale config by accepting an
             //IOptionMonitor<Auth0ProcessArgsConfig>
-            ITemplateSource templateSource = app.GetRequiredService<ITemplateSource>();
-            PipelineStageFactory pipelineStageFactory = app.GetRequiredService<PipelineStageFactory>();
+            var templateSource = app.GetRequiredService<ITemplateSource>();
+            var pipelineStageFactory = app.GetRequiredService<IPipelineStageFactory>();
 
             var reporter = app.GetRequiredService<IReporter>();
 
@@ -103,7 +103,7 @@ namespace Banjo.CLI.Commands
             var pipelineStages = new List<IPipelineStage<Auth0ResourceTemplate>>
             {
                 pipelineStageFactory.CreateTemplateReader(),
-                await pipelineStageFactory.CreateOverridesProcessor(),
+                pipelineStageFactory.CreateOverridesProcessor(),
                 pipelineStageFactory.CreateTokenReplacementStage(),
                 pipelineStageFactory.CreateResourcePreprocessingStage(),
                 pipelineStageFactory.CreateOutputProcessor(),

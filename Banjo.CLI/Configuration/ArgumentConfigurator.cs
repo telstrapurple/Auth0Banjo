@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Banjo.CLI.Configuration
 {
-    public class ArgumentConfigurator
+    public class ArgumentConfigurator : IArgumentConfigurator
     {
         private readonly IConfigurationRoot _configRoot;
 

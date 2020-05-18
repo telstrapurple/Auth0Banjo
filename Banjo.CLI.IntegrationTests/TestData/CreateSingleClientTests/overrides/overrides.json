@@ -1,0 +1,19 @@
+{
+  "replacements": [
+    {
+      "token": "name",
+      "value": "Tones"
+    }
+  ],
+  "clients": [
+    {
+      "name": "client.template.json",
+      "overrides": [
+        {
+          "jsonpath": "name",
+          "replacement": "My Name Is %%NAME%%"
+        }
+      ]
+    },
+  ]
+}

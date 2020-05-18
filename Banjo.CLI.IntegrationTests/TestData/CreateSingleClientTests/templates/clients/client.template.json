@@ -1,0 +1,15 @@
+{
+  "is_token_endpoint_ip_header_trusted": false,
+  "name": "HerpaDerpaClientName",
+  "is_first_party": true,
+  "oidc_conformant": true,
+  "sso_disabled": false,
+  "cross_origin_auth": false,
+  "allowed_clients": [],
+  "callbacks": [],
+  "token_endpoint_auth_method": "client_secret_post",
+  "app_type": "non_interactive",
+  "grant_types": [
+    "client_credentials"
+  ],
+}

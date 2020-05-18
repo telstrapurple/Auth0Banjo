@@ -36,6 +36,7 @@ namespace Banjo.CLI.Services.PipelineStages
                         _reporter.Error($"An error occurred processing {template.Type.Name} template {template.Filename} in stage \'{stage.Name}\'");
                         _reporter.Error(e.Message);
                         _reporter.Error("Template cannot be processed further.");
+                        throw;
                         break;
                     }
                 }

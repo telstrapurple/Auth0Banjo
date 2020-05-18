@@ -21,14 +21,14 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
     {
         protected override ResourceType Type { get; } = ResourceType.Pages;
 
-        private readonly ManagementApiClientFactory _managementApiClientFactory;
+        private readonly IManagementApiClientFactory _managementApiClientFactory;
         private readonly IConverter<Auth0ResourceTemplate, BanjoPage> _converter;
 
         public PagesProcessor(
             IOptionsMonitor<Auth0ProcessArgsConfig> args,
             IConverter<Auth0ResourceTemplate, BanjoPage> converter,
             IReporter reporter,
-            ManagementApiClientFactory managementApiClientFactory)
+            IManagementApiClientFactory managementApiClientFactory)
             : base(args, converter, reporter)
         {
             _managementApiClientFactory = managementApiClientFactory;

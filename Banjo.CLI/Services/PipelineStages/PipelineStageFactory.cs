@@ -1,106 +1,57 @@
 using System;
 using System.Threading.Tasks;
-using Banjo.CLI.Configuration;
 using Banjo.CLI.Model;
-using Banjo.CLI.Services.ResourceTypeProcessors;
-using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Banjo.CLI.Services.PipelineStages
 {
-    public class PipelineStageFactory
+    public class PipelineStageFactory : IPipelineStageFactory
     {
-        private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _argOptions;
-        private readonly IOverridesSource _overridesSource;
-        private readonly ResourceTypeProcessorFactory _resourceTypeProcessorFactory;
-        private readonly IReporter _reporter;
+        private readonly IServiceProvider _resolver;
 
-        public PipelineStageFactory(
-            IOptionsMonitor<Auth0ProcessArgsConfig> argOptions,
-            IOverridesSource overridesSource,
-            ResourceTypeProcessorFactory resourceTypeProcessorFactory, 
-            IReporter reporter)
+        public PipelineStageFactory(IServiceProvider resolver)
         {
-            _argOptions = argOptions;
-            _overridesSource = overridesSource;
-            _resourceTypeProcessorFactory = resourceTypeProcessorFactory;
-            _reporter = reporter;
+            _resolver = resolver;
         }
 
         public IPipelineStage<Auth0ResourceTemplate> CreateTemplateReader()
         {
-            return new TemplateReaderPipelineStage();
+            return _resolver.GetRequiredService<TemplateReaderPipelineStage>();
         }
 
-        public async Task<IPipelineStage<Auth0ResourceTemplate>> CreateOverridesProcessor()
+        public IPipelineStage<Auth0ResourceTemplate> CreateOverridesProcessor()
         {
-            var overrides = await _overridesSource.GetOverridesAsync(_argOptions.CurrentValue.OverrideFilePath);
-            return new ApplyOverridesPipelineStage(overrides);
+            return _resolver.GetRequiredService<ApplyOverridesPipelineStage>();
         }
 
         public IPipelineStage<Auth0ResourceTemplate> CreateOutputProcessor()
         {
-            return new WriteOutputPipelineStage(_reporter, _argOptions);
+            return _resolver.GetRequiredService<WriteOutputPipelineStage>();
         }
 
         public IPipelineStage<Auth0ResourceTemplate> CreateApiExecutor()
         {
-            return new ApiExecutorPipelineStage(_resourceTypeProcessorFactory, _argOptions, _reporter);
+            return _resolver.GetRequiredService<ApiExecutorPipelineStage>();
         }
-        
+
         public IPipelineStage<Auth0ResourceTemplate> CreateVerifier()
         {
-            return new TemplateValidatorStage(_resourceTypeProcessorFactory, _reporter);
+            return _resolver.GetRequiredService<TemplateValidatorStage>();
         }
-        
+
         public IPipelineStage<Auth0ResourceTemplate> CreateUnresolvedTokenVerifier()
         {
-            return new UnresolvedTokenVerifierStage(_reporter);
+            return _resolver.GetRequiredService<UnresolvedTokenVerifierStage>();
         }
-        
+
         public IPipelineStage<Auth0ResourceTemplate> CreateTokenReplacementStage()
         {
-            return new StringReplacementStage();
+            return _resolver.GetRequiredService<StringReplacementStage>();
         }
 
         public IPipelineStage<Auth0ResourceTemplate> CreateResourcePreprocessingStage()
         {
-            return new ResourcePreProcessorStage(_resourceTypeProcessorFactory, _reporter);
-        }
-    }
-
-    public class ResourcePreProcessorStage : IPipelineStage<Auth0ResourceTemplate>
-    {
-        public string Name { get; } = "Preprocess Template";
-
-        private readonly ResourceTypeProcessorFactory _processorFactory;
-        private readonly IReporter _reporter;
-
-        public ResourcePreProcessorStage(
-            ResourceTypeProcessorFactory processorFactory, 
-            IReporter reporter)
-        {
-            _processorFactory = processorFactory;
-            _reporter = reporter;
-        }
-
-        public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
-        {
-            var processor = _processorFactory.GetProcessor(t.Type);
-
-            try
-            {
-                await processor.Preprocess(t);
-                t.Preprocessed = true;
-            }
-            catch (Exception e)
-            {
-                _reporter.Error($"Result of preprocessing {t.Type.Name} template {t.Location.FullName} failed with an error.");
-                _reporter.Error(e.Message);
-            }
-
-            return t;
+            return _resolver.GetRequiredService<ResourcePreProcessorStage>();
         }
     }
 }

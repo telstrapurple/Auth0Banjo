@@ -11,12 +11,12 @@ namespace Banjo.CLI.Services.PipelineStages
     {
         public string Name { get; } = "Execute Auth0 API";
 
-        private readonly ResourceTypeProcessorFactory _processorFactory;
+        private readonly IResourceTypeProcessorFactory _processorFactory;
         private readonly IOptionsMonitor<Auth0ProcessArgsConfig> _args;
         private readonly IReporter _reporter;
 
         public ApiExecutorPipelineStage(
-            ResourceTypeProcessorFactory processorFactory,
+            IResourceTypeProcessorFactory processorFactory,
             IOptionsMonitor<Auth0ProcessArgsConfig> args,
             IReporter reporter)
         {

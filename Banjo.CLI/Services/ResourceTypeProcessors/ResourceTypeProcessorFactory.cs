@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Banjo.CLI.Services.ResourceTypeProcessors
 {
-    public class ResourceTypeProcessorFactory
+    public class ResourceTypeProcessorFactory : IResourceTypeProcessorFactory
     {
         private readonly Dictionary<string, IResourceTypeProcessor> _processorMap;
 

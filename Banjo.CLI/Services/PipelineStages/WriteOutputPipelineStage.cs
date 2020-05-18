@@ -21,7 +21,7 @@ namespace Banjo.CLI.Services.PipelineStages
             _args = args;
         }
 
-        public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
+        public virtual async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
         {
             var serialised = JsonConvert.SerializeObject(t.Template, Formatting.Indented);
             

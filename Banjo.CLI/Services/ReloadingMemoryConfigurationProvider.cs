@@ -59,7 +59,7 @@ namespace Banjo.CLI.Services
         
         public override void Set(string key, string value)
         {
-            base.Set(key, value);
+            InnerSet(key, value);
             OnReload();
         }
         

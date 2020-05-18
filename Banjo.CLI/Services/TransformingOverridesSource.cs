@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Banjo.CLI.Model;
-using McMaster.Extensions.CommandLineUtils;
 
 namespace Banjo.CLI.Services
 {
@@ -12,13 +12,13 @@ namespace Banjo.CLI.Services
 
         public TransformingOverridesSource(IOverridesSource wrapped, IEnumerable<IOverridesTransformer> transformers)
         {
-            _wrapped = wrapped;
-            _transformers = transformers;
+            _wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
+            _transformers = transformers ?? new List<IOverridesTransformer>();
         }
 
-        public async Task<Overrides> GetOverridesAsync(string overridesFileLocation)
+        public async Task<Overrides> GetOverridesAsync()
         {
-            var ov = await _wrapped.GetOverridesAsync(overridesFileLocation);
+            var ov = await _wrapped.GetOverridesAsync();
 
             foreach (var transformer in _transformers)
             {

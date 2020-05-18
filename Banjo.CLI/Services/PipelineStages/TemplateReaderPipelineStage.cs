@@ -10,7 +10,7 @@ namespace Banjo.CLI.Services.PipelineStages
     {
         public string Name { get; } = "Read Template";
 
-        public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
+        public virtual async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
         {
             var templateFileContents = await File.ReadAllTextAsync(t.Location.FullName);
             var templateContents = JsonConvert.DeserializeObject<JObject>(templateFileContents);

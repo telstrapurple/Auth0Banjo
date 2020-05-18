@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Banjo.CLI.Services
 {
-    public class ManagementApiClientFactory
+    public class ManagementApiClientFactory : IManagementApiClientFactory
     {
         private readonly IAuth0TokenFactory _tokenFactory;
         private readonly IOptionsMonitor<Auth0AuthenticationConfig> _config;

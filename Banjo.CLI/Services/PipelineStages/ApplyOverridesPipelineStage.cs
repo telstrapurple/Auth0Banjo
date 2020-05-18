@@ -10,11 +10,11 @@ namespace Banjo.CLI.Services.PipelineStages
     {
         public string Name { get; } = "Apply Overrides";
 
-        private readonly Overrides _overrides;
+        private readonly IOverridesSource _overridesSource;
 
-        public ApplyOverridesPipelineStage(Overrides overrides)
+        public ApplyOverridesPipelineStage(IOverridesSource overridesSource)
         {
-            _overrides = overrides;
+            _overridesSource = overridesSource;
         }
 
         public async Task<Auth0ResourceTemplate> Process(Auth0ResourceTemplate t)
@@ -24,15 +24,16 @@ namespace Banjo.CLI.Services.PipelineStages
                 throw new ArgumentNullException("t.Template", "Template property must be set on input argument t");
             }
 
-            if (_overrides == null)
+            if (_overridesSource == null)
             {
                 //if no overrides, no-op and return
                 return t;
             }
-            
-            t.Overrides = _overrides;
 
-            var candidateOverrides = t.Type.OverridesAccessor.Invoke(_overrides) ?? new List<TemplateOverride>();
+            var rootOverrides = await _overridesSource.GetOverridesAsync();
+            t.Overrides = rootOverrides;
+
+            var candidateOverrides = t.Type.OverridesAccessor.Invoke(rootOverrides) ?? new List<TemplateOverride>();
             var overrides = candidateOverrides.Where(x => x.TemplateName == t.Filename).SelectMany(x => x.Overrides).ToList();
             foreach (var @override in overrides)
             {

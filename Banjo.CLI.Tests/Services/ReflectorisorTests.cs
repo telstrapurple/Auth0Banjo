@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
 
-namespace Banjo.CLI.Tests
+namespace Banjo.CLI.Tests.Services
 {
     public class ReflectorisorTests
     {

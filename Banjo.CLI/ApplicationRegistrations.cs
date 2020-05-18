@@ -18,6 +18,7 @@ namespace Banjo.CLI
         public static void RegisterApplicationServices(this ContainerBuilder container)
         {
             container.RegisterModule<ResourceTypeProcessorModule>();
+            container.RegisterModule<PipelineStageModule>();
             
             container.Register<ConsoleReporter>(
                     context =>
@@ -36,6 +37,7 @@ namespace Banjo.CLI
             container.RegisterType<DefaultTemplateSource>().AsImplementedInterfaces();
             container.RegisterType<FileOverrideSource>().AsImplementedInterfaces();
             container.RegisterDecorator<TransformingOverridesSource, IOverridesSource>();
+            container.RegisterDecorator<CachingOverridesSource, IOverridesSource>();
             
             container.RegisterType<ReplacementTokensFromEnvironmentVariablesTransformer>()
                 .AsImplementedInterfaces();
@@ -47,7 +49,6 @@ namespace Banjo.CLI
             container.RegisterInstance(new HttpClient()).As(typeof(HttpClient));
 
             container.RegisterType<ManagementApiClientFactory>()
-                .AsSelf()
                 .AsImplementedInterfaces();
             
             container.RegisterType<HttpClientManagementConnection>().AsImplementedInterfaces();
@@ -56,15 +57,10 @@ namespace Banjo.CLI
             container.RegisterType<HttpClientManagementConnection>().AsImplementedInterfaces().SingleInstance();
 
             container.RegisterGeneric(typeof(Auth0ResourceTemplateToApiModelConverter<>))
-                .AsSelf()
                 .AsImplementedInterfaces();
 
-            container.RegisterType<PipelineStageFactory>()
-                .AsSelf()
-                .AsImplementedInterfaces();
-
-            container.RegisterType<ArgumentConfigurator>().AsSelf().AsImplementedInterfaces();
-            container.RegisterType<ResourceTypeProcessorFactory>().AsSelf().AsImplementedInterfaces();
+            container.RegisterType<ArgumentConfigurator>().AsImplementedInterfaces();
+            container.RegisterType<ResourceTypeProcessorFactory>().AsImplementedInterfaces();
         }
     }
 }

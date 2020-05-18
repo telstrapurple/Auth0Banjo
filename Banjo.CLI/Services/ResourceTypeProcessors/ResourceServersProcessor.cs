@@ -13,7 +13,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
     {
         protected override ResourceType Type { get; } = ResourceType.ResourceServers;
 
-        private readonly ManagementApiClientFactory _managementApiClientFactory;
+        private readonly IManagementApiClientFactory _managementApiClientFactory;
         private readonly IConverter<Auth0ResourceTemplate, ResourceServer> _converter;
         private readonly IReporter _reporter;
 
@@ -21,7 +21,7 @@ namespace Banjo.CLI.Services.ResourceTypeProcessors
             IOptionsMonitor<Auth0ProcessArgsConfig> args,
             IConverter<Auth0ResourceTemplate, ResourceServer> converter,
             IReporter reporter,
-            ManagementApiClientFactory managementApiClientFactory)
+            IManagementApiClientFactory managementApiClientFactory)
             : base(args, converter, reporter)
         {
             _managementApiClientFactory = managementApiClientFactory;

@@ -22,24 +22,34 @@ namespace Banjo.CLI
         private static string GetVersion()
             => typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
+        public async Task<int> Run(string[] args)
+        {
+            return await _Run(args, CreateHostBuilder());
+        }
+        
+        protected virtual async Task<int> _Run(string[] args, IHostBuilder hostBuilder)
+        {
+            return await hostBuilder.RunCommandLineApplicationAsync<Program>(args);
+        }
 
         public static async Task<int> Main(string[] args)
         {
-            return await Host.CreateDefaultBuilder()
+            return await new Program().Run(args);
+        }
+
+        protected virtual IHostBuilder CreateHostBuilder()
+        {
+            var hostBuilder = Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureLogging((context, builder) => { builder.SetMinimumLevel(LogLevel.Information).AddConsole(); })
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    
-                    config.Add(new ReloadingMemoryConfigurationSource());
-                })
+                .ConfigureAppConfiguration((hostingContext, config) => { config.Add(new ReloadingMemoryConfigurationSource()); })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<Auth0AuthenticationConfig>(hostContext.Configuration.GetSection("Auth0"));
                     services.Configure<Auth0ProcessArgsConfig>(hostContext.Configuration);
                 })
-                .ConfigureContainer<ContainerBuilder>(container => { container.RegisterApplicationServices(); })
-                .RunCommandLineApplicationAsync<Program>(args);
+                .ConfigureContainer<ContainerBuilder>(container => { container.RegisterApplicationServices(); });
+            return hostBuilder;
         }
 
         public override Task OnExecuteAsync(CommandLineApplication app)
