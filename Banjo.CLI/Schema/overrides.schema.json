@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://purple.telstra.com/banjo/v1/overrides.json",
+  "definitions": {
+    "token-replacement": {
+      "type": "object",
+      "properties": {
+        "token": { "type": "string" },
+        "value": { "type": "string" },
+        "environment-variable": { "type": "string" }
+      },
+      "required": [ "token" ]
+      //there is an extra condition where value is require if environment-variable is not specified,
+      //but this is complex (but allegedly possible) to express in json schema
+    },
+    "override-definition": {
+      "type": "object",
+      "properties": {
+        "jsonpath": { "type": "string" },
+        "replacement": { }
+      },
+      "required": [ "jsonpath", "replacement" ]
+    },
+    "template-override": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "overrides": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/override-definition" }
+        }
+      },
+      "required": [ "name" ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "replacements": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/token-replacement" }
+    },
+    "clients": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "connections": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "grants": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "pages": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "resource-servers": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "roles": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "rules": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    },
+    "tenant-settings": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template-override" }
+    }
+  }
+}

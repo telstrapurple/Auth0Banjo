@@ -1,0 +1,9 @@
+{
+  "$schema": "https://purple.telstra.com/banjo/v1/overrides.json",
+  "resource-servers": [
+    {
+      "ThisIsNotTheNamePropertyYouAreLookingFor": "name",
+      "overrides": []
+    }
+  ]
+}

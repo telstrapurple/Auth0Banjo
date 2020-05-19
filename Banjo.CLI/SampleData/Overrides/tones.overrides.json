@@ -1,8 +1,9 @@
 {
+  "$schema": "https://purple.telstra.com/banjo/overrides.json",
   "replacements": [
     {
       "token": "name",
-      "value": "tones", //UPPER, lower, or miXEd -case keys, Banjo will generate original+upper+lower -case versions
+      "value": "tones"
     },
     {
       "token": "environmentname",
@@ -10,17 +11,17 @@
     },
     {
       "token": "version",
-      "environment-variable": "BANJO_VERSION" //read the value of the "version" token from env var "BANJO_VERSION"
+      "environment-variable": "BANJO_VERSION"
     }
   ],
   "clients": [
-    {
-      "name": "tones-localhost.template.json",
-      "overrides": [
+//    {
+//      "name": "tones-localhost.template.json",
+//      "overrides": [
 //        {
 //          "jsonpath": "name",
 //          "replacement": "test app 5"
-//        }
+//        },
 //        {
 //          "jsonpath": "jwt_configuration.alg",
 //          "replacement": {
@@ -32,7 +33,7 @@
 //          "jsonpath": "jwt_configuration.alg",
 //          "replacement": "%%NAME%%"
 //        }
-      ]
-    }
+//      ]
+//    }
   ]
 }

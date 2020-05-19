@@ -1,0 +1,7 @@
+{
+  "replacements": [
+    { "token": "hello", "value": "value" },
+    { "token": "hurro", "environment-variable": "QIJIBOE" },
+    { "token": "hurro", "value": "optional value", "environment-variable": "QIJIBOE" },
+  ]
+}

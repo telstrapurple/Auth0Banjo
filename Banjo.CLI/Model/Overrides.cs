@@ -45,8 +45,8 @@ namespace Banjo.CLI.Model
         [JsonProperty("rules")]
         public IEnumerable<TemplateOverride> Rules { get; set; }
 
-        [JsonProperty("database-connections")]
-        public IEnumerable<TemplateOverride> DatabaseConnections { get; set; }
+        [JsonProperty("connections")]
+        public IEnumerable<TemplateOverride> Connections { get; set; }
     }
 
     public class ReplacementDefinition
