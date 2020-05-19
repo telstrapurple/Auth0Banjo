@@ -9,6 +9,7 @@
     <PackageOutputPath>./</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <UserSecretsId>Banjo.CLI</UserSecretsId>
+    <NoWarn>1998</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

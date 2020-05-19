@@ -28,7 +28,16 @@ stages:
             inputs:
               command: test
               projects: '$(TestProjects)'
-              arguments: '--configuration $(BuildConfiguration)'
+              arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+          - script: |
+              dotnet tool install -g dotnet-reportgenerator-globaltool
+              reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:Cobertura
+            displayName: Create Code coverage report
+          - task: PublishCodeCoverageResults@1
+            displayName: 'Publish code coverage'
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
 
   - stage: Stage
     displayName: 'Publish CLI'

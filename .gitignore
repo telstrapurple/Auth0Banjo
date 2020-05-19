@@ -12,3 +12,5 @@ riderModule.iml
 /Banjo.CLI/SampleData/processedoutput
 auth0exports/
 /Banjo.CLI.IntegrationTests/TestDataOutput
+CodeCoverage/
+coverage.cobertura.xml
