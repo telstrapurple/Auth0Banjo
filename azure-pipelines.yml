@@ -18,11 +18,18 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
+          - checkout: self
+            persistCredentials: true
+            #allow steps to use the agent git credentials
+          - task: gittools.gitversion.gitversion-task.GitVersion@4 # Automatically creates a GitVersion.NuGetVersion variable.
+            displayName: GitVersion
+            inputs:
+              preferBundledVersion: false
           - task: DotNetCoreCLI@2
             displayName: Build
             inputs:
               projects: '$(BuildProjects)'
-              arguments: '--configuration $(BuildConfiguration)'
+              arguments: '--configuration $(BuildConfiguration)  -p:VersionPrefix=$(GitVersion.NuGetVersion)'
           - task: DotNetCoreCLI@2
             displayName: Test
             inputs:
@@ -38,25 +45,6 @@ stages:
             inputs:
               codeCoverageTool: Cobertura
               summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
-
-  - stage: Stage
-    displayName: 'Publish CLI'
-    dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) # Only run for master, after Build has succeeded
-    jobs:
-      - job: Version
-        pool:
-          vmImage: 'windows-latest'
-        steps:
-          - task: gittools.gitversion.gitversion-task.GitVersion@4 # Automatically creates a GitVersion.NuGetVersion variable.
-            displayName: GitVersion
-            inputs:
-              preferBundledVersion: false
-          - task: DotNetCoreCLI@2
-            displayName: dotnet build
-            inputs:
-              projects: '$(BuildProjects)'
-              arguments: '--configuration $(BuildConfiguration) -p:VersionPrefix=$(GitVersion.NuGetVersion)'
           - task: DotNetCoreCLI@2
             displayName: 'dotnet publish Banjo.CLI'
             inputs:
@@ -72,14 +60,33 @@ stages:
               path: '$(Build.ArtifactStagingDirectory)/Banjo.CLI'
               artifact: Banjo.CLI
           - task: PublishPipelineArtifact@1
-            displayName: 'Publish CLI Artifact'
+            displayName: 'Publish nupkg as Pipeline Artifact'
             inputs:
               path: 'Banjo.CLI/Banjo.CLI.$(GitVersion.NuGetVersion).nupkg'
               artifact: CLI
+          - pwsh: |
+              # adapted from: https://developercommunity.visualstudio.com/idea/1007477/missing-gui-option-create-git-tag-after-successful.html?childToView=1014307#comment-1014307
+              # configure the git user as the user that requested this pipline run
+              git config user.email $env:BUILD_REQUESTEDFOREMAIL
+              git config user.name $env:BUILD_REQUESTEDFOR
+
+              # set a tag name and message for annotated tag
+              git tag -a $env:TAG -m "Tagged for release by $env:BUILD_REQUESTEDFOR"
+              git push origin $env:TAG
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) #only tag master commits
+            env:
+              TAG: $(GitVersion.NuGetVersion)
+            displayName: Tag master commit
+
+  - stage: Publish_Nuget
+    displayName: 'Publish CLI'
+    dependsOn: Build
+    condition: and(succeeded(), or( eq(variables['Build.SourceBranch'], 'refs/heads/master') , eq(variables['Build.Reason'], 'PullRequest') ) ) # Only run for master or PR, after Build has succeeded
+    jobs:
       - job: CLI
         pool:
            vmImage: 'windows-latest'
-        dependsOn: Version
+        # dependsOn: Build
         steps:
            - checkout: none
            - task: DownloadPipelineArtifact@2
