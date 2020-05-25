@@ -20,6 +20,7 @@ stages:
         steps:
           - checkout: self
             persistCredentials: true
+            clean: true
             #allow steps to use the agent git credentials
           - task: gittools.gitversion.gitversion-task.GitVersion@4 # Automatically creates a GitVersion.NuGetVersion variable.
             displayName: GitVersion
@@ -67,16 +68,22 @@ stages:
           - pwsh: |
               # adapted from: https://developercommunity.visualstudio.com/idea/1007477/missing-gui-option-create-git-tag-after-successful.html?childToView=1014307#comment-1014307
               # configure the git user as the user that requested this pipline run
+              Write-Host "git config user.email $env:BUILD_REQUESTEDFOREMAIL"
               git config user.email $env:BUILD_REQUESTEDFOREMAIL
+              Write-Host "git config user.name $env:BUILD_REQUESTEDFOR"
               git config user.name $env:BUILD_REQUESTEDFOR
 
               # set a tag name and message for annotated tag
+              Write-Host "git tag -a $env:TAG -m ""Tagged for release by $env:BUILD_REQUESTEDFOR"""
               git tag -a $env:TAG -m "Tagged for release by $env:BUILD_REQUESTEDFOR"
+              Write-Host "git push origin $env:TAG"
               git push origin $env:TAG
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) #only tag master commits
             env:
               TAG: $(GitVersion.NuGetVersion)
             displayName: Tag master commit
+            failOnStderr: false
+            continueOnError: true # The task seems to _always_ fail even when it's successfully created the tag
 
   - stage: Publish_Nuget
     displayName: 'Publish CLI'
