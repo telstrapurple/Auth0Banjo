@@ -1,9 +1,8 @@
-using System;
 using System.IO;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace Banjo.CLI.IntegrationTests
+namespace Banjo.CLI.TestSupport
 {
     public class TestOutputHelperTextWriter : TextWriter
     {

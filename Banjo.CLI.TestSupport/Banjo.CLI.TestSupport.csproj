@@ -9,6 +9,7 @@
       <PackageReference Include="Auth0.ManagementApi" Version="7.0.5" />
       <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.0.0" />
       <PackageReference Include="xunit.abstractions" Version="2.0.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
     </ItemGroup>
 
     <ItemGroup>

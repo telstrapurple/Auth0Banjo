@@ -1,24 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Paging;
 using Banjo.CLI.Services;
+using Banjo.CLI.TestSupport.ApiModel;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
 
-namespace Banjo.CLI.IntegrationTests
+namespace Banjo.CLI.TestSupport
 {
     public class TestManagementConnection : IManagementConnection
     {
         
         private readonly ITestOutputHelper _output;
+        private readonly Auth0InMemoryStore _store;
+        private readonly IList<ApiCall> _apiCalls;
 
-        public TestManagementConnection(ITestOutputHelper output)
+        public TestManagementConnection(ITestOutputHelper output, Auth0InMemoryStore store, IList<ApiCall> apiCalls)
         {
             _output = output ?? throw new ArgumentNullException(nameof(output));
+            _store = store;
+            _apiCalls = apiCalls;
         }
 
         public async Task<T> GetAsync<T>(Uri uri, IDictionary<string, string> headers, JsonConverter[] converters = null)
@@ -26,16 +30,7 @@ namespace Banjo.CLI.IntegrationTests
             _output.WriteLine("GetAsync: {0}", uri);
             _output.WriteLine("GetAsync: Headers: {0}", JsonConvert.SerializeObject(headers, Formatting.Indented));
             
-            var desiredType = typeof(T);
-            var desiredOpenGenericType = desiredType.GetGenericTypeDefinition();
-            var pagedListOpenGeneric = typeof(PagedList<>);
-            if (typeof(IPagedList<>).IsAssignableFrom(desiredOpenGenericType))
-            {
-                Type pagedListClosedGeneric = pagedListOpenGeneric.MakeGenericType(desiredType.GetGenericArguments());
-                var constructorInfo = pagedListClosedGeneric.GetConstructor(new Type[] {});
-                return (T) constructorInfo.Invoke(null);
-            }
-            return Activator.CreateInstance<T>();
+            return (T) ExecuteApiCall(HttpMethod.Get, uri, null);
         }
 
         public async Task<T> SendAsync<T>(HttpMethod method, Uri uri, object body, IDictionary<string, string> headers, IList<FileUploadParameter> files = null)
@@ -43,10 +38,21 @@ namespace Banjo.CLI.IntegrationTests
             _output.WriteLine("SendAsync: {0} {1}", method, uri);
             _output.WriteLine("SendAsync: Headers: {0}", JsonConvert.SerializeObject(headers, Formatting.Indented));
             _output.WriteLine("SendAsync: Body: {0}", JsonConvert.SerializeObject(body, Formatting.Indented));
-            
-            var reflectorer = typeof(Reflectorisor).GetMethod(nameof(Reflectorisor.CopyMembers)).MakeGenericMethod(body.GetType(), typeof(T));
-            var returnValue = (T) reflectorer.Invoke(null, new[] {body});
-            return returnValue;
+
+            return (T) ExecuteApiCall(method, uri, body);
+        }
+
+        private object ExecuteApiCall(HttpMethod method, Uri uri, object body)
+        {
+            foreach (var call in _apiCalls)
+            {
+                if (call.IsMatch(method, uri))
+                {
+                    return call.Execute(uri, body, _store);
+                }
+            }
+
+            throw new NotImplementedException($"No api call implemented to mirror {method} {uri}");
         }
     }
 }

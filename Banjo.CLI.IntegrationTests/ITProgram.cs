@@ -7,6 +7,7 @@ using Banjo.CLI.Model;
 using Banjo.CLI.Services;
 using Banjo.CLI.Services.PipelineStages;
 using Banjo.CLI.TestSupport;
+using Banjo.CLI.TestSupport.ApiModel;
 using FakeItEasy;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Hosting;
@@ -21,19 +22,18 @@ namespace Banjo.CLI.IntegrationTests
         public ITestOutputHelper OutputHelper { get; set; }
         public TestOutputHelperTextWriter StandardOutput { get; set; }
         public TestOutputHelperTextWriter StandardError { get; set; }
-        public IAuth0TokenFactory TokenFactory { get; set; }
-        public IOverridesSource OverridesSource { get; set; }
+        public TestTokenFactory TokenFactory { get; set; }
+        public TestOverridesSource OverridesSource { get; set; }
         public IManagementConnection FakeManagementConnection { get; set; }
+        public IManagementConnection RealManagementConnection { get; set; }
+        public Auth0InMemoryStore Store { get; }
 
-        public ITemplateSource TemplateSource { get; set; }
+        public TestTemplateSource TemplateSource { get; set; }
         // public TestWriteOutputPipelineStage OutputStage {get; set;} //will we even need to deal with this in tests?
 
-        private readonly Action<ContainerBuilder>[] _builders;
-
-        public ITProgram(ITestOutputHelper outputter, params Action<ContainerBuilder>[] builders)
+        public ITProgram(ITestOutputHelper outputter, Auth0InMemoryStore initialStore = null)
         {
             OutputHelper = outputter;
-            _builders = builders;
 
             StandardOutput = new TestOutputHelperTextWriter(outputter);
             StandardError = new TestOutputHelperTextWriter(outputter);
@@ -41,8 +41,10 @@ namespace Banjo.CLI.IntegrationTests
             OverridesSource = new TestOverridesSource();
             TemplateSource = new TestTemplateSource();
             
-            var realManagementConnection = new TestManagementConnection(outputter);
-            var fakeManagementConnection = A.Fake<IManagementConnection>(o => o.Wrapping(realManagementConnection));
+            Store = initialStore ?? new Auth0InMemoryStore();
+            //Create a spy wrapping a TestManagementConnection so we can use fakeiteasy-syntax for verifying interactions.
+            RealManagementConnection = new TestManagementConnection(outputter, Store, ApiCalls.AllApiCalls);
+            var fakeManagementConnection = A.Fake<IManagementConnection>(o => o.Wrapping(RealManagementConnection));
             A.CallTo(fakeManagementConnection).CallsWrappedMethod();
             
             FakeManagementConnection = fakeManagementConnection;
@@ -55,16 +57,7 @@ namespace Banjo.CLI.IntegrationTests
             {
                 container.Register(context => new TextWriterConsole(StandardOutput, StandardError)).AsImplementedInterfaces().SingleInstance();
                 container.Register(context => TokenFactory).AsImplementedInterfaces().SingleInstance();
-                // container.Register(context => OverridesSource).AsImplementedInterfaces();
                 container.Register(context => FakeManagementConnection).AsImplementedInterfaces();
-                // container.Register(context => TemplateSource).AsImplementedInterfaces();
-                // container.RegisterType<TestWriteOutputPipelineStage>().As<WriteOutputPipelineStage>();
-                // container.RegisterType<NoOpTemplateReaderStage>().As<TemplateReaderPipelineStage>();
-
-                foreach (var builder in _builders)
-                {
-                    builder.Invoke(container);
-                }
             });
 
             return hostBuilder;
