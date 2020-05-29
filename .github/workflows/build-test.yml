@@ -20,6 +20,7 @@ jobs:
       run: |
         $GitVersion = dotnet gitversion | ConvertFrom-Json
         dotnet build --configuration Release -p:VersionPrefix=$($GitVersion.NuGetVersion)
+      shell: pwsh
       
   test:
     runs-on: windows-latest
