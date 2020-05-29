@@ -1,0 +1,41 @@
+name: Build branch
+
+on:
+  push:
+    branches: [ master, feature/* ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet tool restore
+    - name: Fetch all history for all tags and branches
+      run: git fetch --prune --unshallow
+    - name: Build
+      run: |
+        $GitVersion = (dotnet tool run dotnet-gitversion /output json) | ConvertFrom-Json
+        dotnet build --configuration Release -p:VersionPrefix=$($GitVersion.NuGetVersion)
+      shell: pwsh
+      
+  test:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Test
+      run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura

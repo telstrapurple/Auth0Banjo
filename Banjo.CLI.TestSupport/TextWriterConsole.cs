@@ -26,6 +26,6 @@ namespace Banjo.CLI.TestSupport
         public bool IsErrorRedirected { get; }
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
-        public event ConsoleCancelEventHandler? CancelKeyPress;
+        public event ConsoleCancelEventHandler CancelKeyPress;
     }
 }
