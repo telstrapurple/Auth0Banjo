@@ -37,7 +37,6 @@ namespace Banjo.CLI.Services.PipelineStages
                         _reporter.Error(e.Message);
                         _reporter.Error("Template cannot be processed further.");
                         throw;
-                        break;
                     }
                 }
             }
