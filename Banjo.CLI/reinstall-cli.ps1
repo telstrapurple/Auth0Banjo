@@ -1,7 +1,9 @@
 $ToolName = "banjo.cli"
 
-dotnet build
-dotnet pack --output ./
+dotnet tool restore
+$GitVersion = dotnet gitversion | ConvertFrom-Json
+dotnet build -p:VersionPrefix=$($GitVersion.NuGetVersion)
+#dotnet pack --output ./ # GeneratePackageOnBuild is already set
 $IsInstalled = (dotnet tool list -g | where { $_.StartsWith($ToolName)}).length -gt 0
 if ($IsInstalled)
 {
@@ -11,4 +13,4 @@ if ($IsInstalled)
 {
   Write-Host "$ToolName is not installed, nothing to uninstall"
 }
-dotnet tool install -g $ToolName --add-source ./
+dotnet tool install -g $ToolName --add-source ./ --version $($GitVersion.NuGetVersion)
