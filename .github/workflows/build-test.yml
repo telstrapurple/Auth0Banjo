@@ -18,11 +18,11 @@ jobs:
       run: dotnet tool restore
     - name: Fetch all history for all tags and branches
       run: git fetch --prune --unshallow
+    - name: Calculate GitVersion
+      id: gitversion # step id used as reference for output values
+      run: dotnet tool run dotnet-gitversion
     - name: Build
-      run: |
-        $GitVersion = (dotnet tool run dotnet-gitversion /output json) | ConvertFrom-Json
-        dotnet build --configuration Release -p:VersionPrefix=$($GitVersion.NuGetVersion)
-      shell: pwsh
+      run: dotnet build --configuration Release -p:VersionPrefix=${{steps.gitversion.outputs.NuGetVersion}}
       
   test:
     runs-on: windows-latest
