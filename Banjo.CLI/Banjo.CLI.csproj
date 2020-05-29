@@ -10,7 +10,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <UserSecretsId>Banjo.CLI</UserSecretsId>
     <NoWarn>1998</NoWarn>
-    <PackageId>AppLogger</PackageId>
     <Authors>readify sgryphon</Authors>
     <Company>Telstra Purple</Company>
     <PackageTags>Auth0</PackageTags>
