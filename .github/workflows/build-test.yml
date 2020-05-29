@@ -18,7 +18,7 @@ jobs:
       run: dotnet tool restore
     - name: Build
       run: |
-        $GitVersion = dotnet gitversion | ConvertFrom-Json
+        $GitVersion = (dotnet tool run dotnet-gitversion /output json) | ConvertFrom-Json
         dotnet build --configuration Release -p:VersionPrefix=$($GitVersion.NuGetVersion)
       shell: pwsh
       
