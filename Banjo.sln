@@ -8,6 +8,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banjo.CLI.IntegrationTests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banjo.CLI.TestSupport", "Banjo.CLI.TestSupport\Banjo.CLI.TestSupport.csproj", "{A3DDCA3C-FC5D-4BB2-A121-1C90703B2BD6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{78A87B99-C5A0-4FD6-AE9E-985A2A2E3030}"
+ProjectSection(SolutionItems) = preProject
+	readme.md = readme.md
+	.github\workflows\build-test.yml = .github\workflows\build-test.yml
+	.github\workflows\continuous-deployment.yml = .github\workflows\continuous-deployment.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
