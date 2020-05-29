@@ -1,4 +1,4 @@
-name: Push Nuget
+name: Deploy master (push nuget)
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     branches: [ feature/* ]
 
 jobs:
-  deploy:
+  Deploy:
     runs-on: ubuntu-latest
 
     steps:

@@ -2,10 +2,10 @@ name: Build branch
 
 on:
   push:
-    branches: [ master, feature/* ]
+    branches: [ feature/* ]
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         dotnet build --configuration Release -p:VersionPrefix=$($GitVersion.NuGetVersion)
       shell: pwsh
       
-  test:
+  Test:
     runs-on: windows-latest
 
     strategy:
