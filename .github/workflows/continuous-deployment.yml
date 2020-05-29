@@ -1,0 +1,33 @@
+name: Push Nuget
+
+on:
+  push:
+    #branches: [ master ]
+    branches: [ feature/* ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+        source-url: https://api.nuget.org/v3/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_API_KEY}}
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.2
+      with:
+        versionSpec: '5.2.x'
+    - name: Fetch all history for all tags and branches
+      run: git fetch --prune --unshallow
+    - name: Use GitVersion
+      id: gitversion # step id used as reference for output values
+      uses: gittools/actions/gitversion/execute@v0.9.2      
+    - name: Build
+      run: dotnet build --configuration Release -p:VersionPrefix=${{steps.gitversion.outputs.NuGetVersion}}
+#    - name: Publish the package to Azure Artifacts
+#      run: dotnet nuget push <my project>/bin/Release/*.nupkg
