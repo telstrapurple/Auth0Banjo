@@ -14,6 +14,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+        source-url: https://nuget.pkg.github.com/telstrapurple/index.json
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.2
       with:
@@ -26,4 +27,4 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release -p:VersionPrefix=${{steps.gitversion.outputs.NuGetVersion}}
     - name: Publish the package to Github packages
-      run: dotnet nuget push Banjo.CLI/Banjo.CLI.${{steps.gitversion.outputs.NuGetVersion}}.nupkg --source "github"
+      run: dotnet nuget push Banjo.CLI/Banjo.CLI.${{steps.gitversion.outputs.NuGetVersion}}.nupkg
