@@ -7,23 +7,24 @@ Banjo is designed from the ground up to support defining and deploying Auth0 res
 
 Banjo is built as a [DotNet Core Global Tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) meaning that we can install/run it on any platform. It is ideally suited to being used in CI/CD pipelines.
 
+| Status |   |
+| ------ | - |
+| Release (master) | ![Release (nuget)](https://github.com/telstrapurple/Auth0Banjo/workflows/Release%20(nuget)/badge.svg) |
+| Alpha release (develop) | ![Continuous deployment (alpha)](https://github.com/telstrapurple/Auth0Banjo/workflows/Continuous%20deployment%20(alpha)/badge.svg?branch=develop) |
+| Build (develop) | ![Build branch](https://github.com/telstrapurple/Auth0Banjo/workflows/Build%20branch/badge.svg?branch=develop) |
+
 ## Getting Banjo
 
-1. Banjo is published to a private feed, you'll need to follow the [NuGet Credential Provider Setup](https://github.com/Microsoft/artifacts-credprovider#setup) first.
-2. **[Optional]** Add the private feed:
-    1. Open `Nuget.config` file
-        * Windows `%userprofile%/AppData/Roaming/Nuget/Nuget.config`
-        * Mac `/Users/%userprofile%/.nuget/NuGet/Nuget.config` 
-    2. Then add `https://pkgs.dev.azure.com/readify/Labs/_packaging/Banjo/nuget/v3/index.json` as a source.
-3. Run the following command; Windows `> dotnet tool install -g banjo.cli --interactive`
-    1. If you skipped step 2, you'll need to add `--add-source=https://pkgs.dev.azure.com/readify/Labs/_packaging/Banjo/nuget/v3/index.json` to the end of the command.
-    2. `--interactive` is only required when you don't have a token (or have an expired token).
+Banjo is published as a dotnet global tool on nuget.org.
 
-Note: Depending on the version of dotnet you have it may not support the `--interactive` flag. In this case, you just need to run _any_ dotnet command that authenticates against the AzDO package feed in order to generate a token. When you later do `dotnet tool install -g banjo.cli`, it'll use the previously saved token.
+To install:
 
-As an example, in a project, try to add a non-existent package. This will cause nuget to check the private feed, thus authenticating to it. Eg, `dotnet add package nothingburger --interactive`
+```
+> dotnet tool install -g banjo.cli
+```
 
 ## Build and install
+
 If you want to install the Banjo CLI as a global tool that's built from your own local sources, there's a bit of command line-fu needed.
 (see [this blog post](https://www.meziantou.net/2018/06/11/how-to-publish-a-dotnet-global-tool-with-dotnet-core-2-1))
 
@@ -47,7 +48,7 @@ dotnet tool list -g
 ### The scripted steps
 The manual build process involve;
 * uninstall the tool if it exists,
-* build the new one,
+* build the new one (using GitVersion to generate a semantic version number),
 * publish locally,
 * then install from local
 
@@ -399,3 +400,33 @@ _Banjo vs Management API_
 No known differences.
 
 You can only have one Tenant Settings template file, as there is only one tenant settings entity per tenant.
+
+
+## Release process
+
+The `develop` branch is configured for continuous deployment. All pushes/merges to `develop` automatically upload an alpha release that is available in the Github package feed for this project. These should not be considered stable.
+
+The `master` branch is configured for continuous delivery with candidate releases and a manual choice when to release. When a Release is tagged and published, it will automatically be uploaded to Nuget.
+
+
+## License
+
+Copyright (C) 2020 Telstra Purple
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
