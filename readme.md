@@ -7,6 +7,12 @@ Banjo is designed from the ground up to support defining and deploying Auth0 res
 
 Banjo is built as a [DotNet Core Global Tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) meaning that we can install/run it on any platform. It is ideally suited to being used in CI/CD pipelines.
 
+| Status |   |
+| ------ | - |
+| Release (master) | ![Release (nuget)](https://github.com/telstrapurple/Auth0Banjo/workflows/Release%20(nuget)/badge.svg) |
+| Alpha release (develop) | ![Continuous deployment (alpha)](https://github.com/telstrapurple/Auth0Banjo/workflows/Continuous%20deployment%20(alpha)/badge.svg?branch=develop) |
+| Build (develop) | ![Build branch](https://github.com/telstrapurple/Auth0Banjo/workflows/Build%20branch/badge.svg?branch=develop) |
+
 ## Getting Banjo
 
 Banjo is published as a dotnet global tool on nuget.org.
