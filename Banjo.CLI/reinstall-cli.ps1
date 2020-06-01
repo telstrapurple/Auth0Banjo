@@ -13,4 +13,4 @@ if ($IsInstalled)
 {
   Write-Host "$ToolName is not installed, nothing to uninstall"
 }
-dotnet tool install -g $ToolName --add-source ./ --version $($GitVersion.NuGetVersion)
+dotnet tool install -g --version $($GitVersion.NuGetVersion) $ToolName --add-source ./
