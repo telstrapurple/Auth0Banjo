@@ -50,3 +50,4 @@ jobs:
       with:
         path: CodeCoverage/Cobertura.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
+        minimum_coverage: 50
