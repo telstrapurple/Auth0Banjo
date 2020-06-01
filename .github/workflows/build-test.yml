@@ -2,7 +2,7 @@ name: Build branch
 
 on:
   push:
-    branches: [ feature/* ]
+    branches: [ master, feature/* ]
   pull_request:
     branches: [ master ]
 
@@ -22,7 +22,7 @@ jobs:
       run: git fetch --prune --unshallow
     - name: Build
       run: |
-        $GitVersion = (dotnet tool run dotnet-gitversion /output json) | ConvertFrom-Json
+        $GitVersion = (dotnet tool run dotnet-gitversion /output json /verbosity verbose) | ConvertFrom-Json
         dotnet build --configuration Release -p:VersionPrefix=$($GitVersion.NuGetVersion)
       shell: pwsh
       
