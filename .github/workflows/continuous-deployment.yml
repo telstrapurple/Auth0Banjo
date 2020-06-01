@@ -1,4 +1,4 @@
-name: Continuous deployment (github)
+name: Continuous deployment (alpha)
 
 on:
   push:
