@@ -10,7 +10,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <UserSecretsId>Banjo.CLI</UserSecretsId>
     <NoWarn>1998</NoWarn>
-    <Authors>telstrapurple sgryphon</Authors>
+    <Authors>telstrapurple tonesandtones sgryphon</Authors>
     <Company>Telstra Purple</Company>
     <PackageTags>Auth0</PackageTags>
     <Description>
@@ -19,6 +19,7 @@
       Banjo is built as a DotNet Core Global Tool meaning that we can install/run it on any platform. It is ideally suited to being used in CI/CD pipelines.
     </Description>
     <RepositoryUrl>https://github.com/telstrapurple/Auth0Banjo</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
