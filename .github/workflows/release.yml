@@ -22,7 +22,7 @@ jobs:
       with:
         versionSpec: '5.2.x'
     - name: Fetch all history for all tags and branches
-      run: git fetch --prune --unshallow
+      run: git fetch --prune --unshallow --tags
     - name: Use GitVersion
       id: gitversion # step id used as reference for output values
       uses: gittools/actions/gitversion/execute@v0.9.2      
