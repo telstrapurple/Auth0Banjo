@@ -20,8 +20,6 @@ jobs:
         dotnet-version: 3.1.101
     - name: Install dependencies
       run: dotnet tool restore
-    - name: Fetch all history for all tags and branches
-      run: git fetch --prune --unshallow
     - name: Build
       run: |
         $GitVersion = (dotnet tool run dotnet-gitversion /output json /verbosity verbose) | ConvertFrom-Json
