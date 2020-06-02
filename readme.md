@@ -10,8 +10,8 @@ Banjo is built as a [DotNet Core Global Tool](https://docs.microsoft.com/en-us/d
 | Status |   |
 | ------ | - |
 | Release (master) | ![Release (nuget)](https://github.com/telstrapurple/Auth0Banjo/workflows/Release%20(nuget)/badge.svg) |
-| Alpha release (develop) | ![Continuous deployment (alpha)](https://github.com/telstrapurple/Auth0Banjo/workflows/Continuous%20deployment%20(alpha)/badge.svg?branch=develop) |
-| Build (develop) | ![Build branch](https://github.com/telstrapurple/Auth0Banjo/workflows/Build%20branch/badge.svg?branch=develop) |
+| Continuous Deployment (rc) | ![Continuous deployment (rc)](https://github.com/telstrapurple/Auth0Banjo/workflows/Continuous%20deployment%20(rc)/badge.svg) |
+| Build | ![Build branch](https://github.com/telstrapurple/Auth0Banjo/workflows/Build%20branch/badge.svg) |
 
 ## Getting Banjo
 
@@ -404,9 +404,9 @@ You can only have one Tenant Settings template file, as there is only one tenant
 
 ## Release process
 
-The `develop` branch is configured for continuous deployment. All pushes/merges to `develop` automatically upload an alpha release that is available in the Github package feed for this project. These should not be considered stable.
+The **Continuous deployment (rc)** worfkflow is configured for continuous deployment. All pushes/merges to `master` automatically upload a release candidate (with an -rcNNNN suffix) that is available in the Github package feed for this project. These should not be considered stable.
 
-The `master` branch is configured for continuous delivery with candidate releases and a manual choice when to release. When a Release is tagged and published, it will automatically be uploaded to Nuget.
+The **Release (nuget)** workflow is triggered when a Release is created. The `master` branch is configured for continuous delivery with release candidatess (as above) and a manual choice when to release. When a Release is tagged and published, the workflow is run and will automatically uploaded the new package to Nuget.
 
 
 ## License
