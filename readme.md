@@ -15,7 +15,7 @@ Banjo is built as a [DotNet Core Global Tool](https://docs.microsoft.com/en-us/d
 
 ## Getting Banjo
 
-Banjo is published as a dotnet global tool on nuget.org.
+Banjo is published as a dotnet global tool on nuget.org, [Banjo.CLI](https://www.nuget.org/packages/Banjo.CLI/).
 
 To install:
 
