@@ -1,0 +1,27 @@
+{
+  "$schema": "https://purple.telstra.com/banjo/overrides.json",
+  "replacements": [
+    {
+      "token": "customer",
+      "value": "ACME"
+    }
+  ],
+  "connections": [
+    {
+      "name": "database.template.json",
+      "overrides": [
+        {
+          "jsonpath": "options.password_dictionary.dictionary",
+          "replacement": [
+              "ACME",
+              "Corp"
+            ]
+        },
+        {
+          "jsonpath": "options.passwordPolicy",
+          "replacements": "good"
+        }
+      ]
+    }
+  ]
+}

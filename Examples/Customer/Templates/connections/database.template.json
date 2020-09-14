@@ -1,0 +1,39 @@
+{
+  "options": {
+    "mfa": {
+      "active": true,
+      "return_enroll_settings": true
+    },
+    "import_mode": false,
+    "configuration": {},
+    "passwordPolicy": "fair",
+    "password_history": {
+      "size": 5,
+      "enable": true
+    },
+    "strategy_version": 2,
+    "password_dictionary": {
+      "enable": true,
+      "dictionary": []
+    },
+    "brute_force_protection": true,
+    "password_no_personal_info": {
+      "enable": true
+    },
+    "password_complexity_options": {
+      "min_length": 8
+    },
+    "enabledDatabaseCustomization": false
+  },
+  "strategy": "auth0",
+  "name": "%%CUSTOMER%%-Custom-User-Database",
+  "is_domain_connection": false,
+  "realms": [
+    "%%CUSTOMER%%-Custom-User-Database"
+  ],
+  //Management API requires enabled_clients. Banjo allows you to set a list of enabled_clients_match_conditions that
+  //are compared to names of the available clients discovered at runtime in order to locate their client ids.
+  "enabled_clients_match_conditions": [
+    "%%CUSTOMER%% [a-zA-Z0-9\\- ]+ Web App"
+  ]
+}

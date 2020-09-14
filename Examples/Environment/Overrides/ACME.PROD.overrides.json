@@ -1,0 +1,34 @@
+{
+  "$schema": "https://purple.telstra.com/banjo/overrides.json",
+  "replacements": [
+    {
+      "token": "customer",
+      "value": "ACME"
+    },
+    {
+      "token": "environment",
+      "value": "PROD"
+    }
+    //no need for %%CLOUDAPPID%%
+    //don't support redirect directly to cloudapp or azurewebsites url
+    // {
+    //   "token": "cloudappid",
+    //   // "environment-variable": "CLOUDAPP_ID"
+    //   "value": ""
+    // }
+  ],
+  "clients": [
+    {
+      "name": "webapp.template.json",
+      "overrides": [
+        {
+          "jsonpath": "callbacks",
+          //don't allow direct return to xyz.azurewebsites.net or xyz.cloudapp.net
+          "replacement": [
+              "https://myapp.acme.example.com/oidc/return"
+            ]
+        }
+      ]
+    }
+  ]
+}

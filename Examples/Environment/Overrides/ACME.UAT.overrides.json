@@ -1,0 +1,19 @@
+{
+  "$schema": "https://purple.telstra.com/banjo/overrides.json",
+  "replacements": [
+    {
+      "token": "customer",
+      "value": "ACME"
+    },
+    {
+      "token": "environment",
+      "value": "UAT"
+    },
+    {
+      "token": "cloudappid",
+      // "environment-variable": "CLOUDAPP_ID"
+      "value": "** should really passed by env var **"
+    }
+  ],
+  "clients": [ ]
+}
