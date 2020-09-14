@@ -1,0 +1,15 @@
+{
+  "$schema": "https://purple.telstra.com/banjo/overrides.json",
+  "replacements": [
+    {
+      "token": "customer",
+      "value": "Nakatomi"
+    }
+  ],
+  "connections": [
+    {
+      "jsonpath": "options.passwordPolicy",
+      "replacements": "good"
+    }
+  ]
+}
