@@ -1,6 +1,5 @@
-[[_TOC_]]
-
 # Banjo
+
 Banjo is a CLI for executing deployment operations against an Auth0 tenant. It lets you define Auth0 resources as json files (templates) that are read and used to drive [Auth0 Management API](https://auth0.com/docs/api/management/v2) calls to create or update Auth0 resources.
 
 Banjo is designed from the ground up to support defining and deploying Auth0 resources for different environments, for example, deploying similar sets of resources to support DEV, TEST, and STAGING environments in one Auth0 tenant and PROD in another tenant.
@@ -15,7 +14,7 @@ Banjo is built as a [DotNet Core Global Tool](https://docs.microsoft.com/en-us/d
 
 ## Getting Banjo
 
-Banjo is published as a dotnet global tool on nuget.org.
+Banjo is published as a dotnet global tool on nuget.org, [Banjo.CLI](https://www.nuget.org/packages/Banjo.CLI/).
 
 To install:
 
