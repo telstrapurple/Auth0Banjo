@@ -1,0 +1,20 @@
+{
+  "$schema": "https://purple.telstra.com/banjo/overrides.json",
+  "replacements": [
+    {
+      "token": "tenant",
+      "value": "Production"
+    }
+  ],
+  "tenant-settings": [
+    {
+      "name": "tenant-settings.template.json",
+      "overrides": [
+        {
+          "jsonpath": "flags.disable_clickjack_protection_headers",
+          "replacement": false
+        }
+      ]
+    }
+  ]
+}

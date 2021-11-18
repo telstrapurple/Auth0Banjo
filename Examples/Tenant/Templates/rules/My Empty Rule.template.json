@@ -1,0 +1,13 @@
+{
+  //Management API requires script to be the script contents. Banjo requires it
+  //to be a path to a text file containing the script contents, relative to the
+  //template file is appears in. Typically it would be alongside the template file,
+  //and referenced as "./{rulefilename}.js".
+  //Banjo will read the file at the "script" property location and replace the
+  //value of the "script" property with the script contents.
+  "enabled": true,
+  "script": "./My Empty Rule.js",
+  "name": "My Empty Rule %%TENANT%%",
+  "order": 2,
+  "stage": "login_success"
+}
