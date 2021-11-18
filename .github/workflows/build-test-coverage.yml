@@ -1,8 +1,8 @@
 name: Build branch
 
 on:
-  pull_request:
-    branches: [ master ]
+  push:
+    branches: [ master, feature/* ]
 
 jobs:
   Build:
@@ -39,3 +39,13 @@ jobs:
         dotnet-version: 3.1.101
     - name: Test
       run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+    - run: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:**/coverage.cobertura.xml -targetdir:CodeCoverage -reporttypes:Cobertura
+      name: Create Code coverage report
+    - uses: 5monkeys/cobertura-action@master
+      name: 'Publish code coverage'
+      with:
+        path: CodeCoverage/Cobertura.xml
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        minimum_coverage: 50
